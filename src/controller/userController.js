@@ -3,6 +3,37 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
 
+const getUser = async( req,res) => {
+    
+    try {
+        const {id} = req.user;
+        if(id.length === 24){
+            Usuario.findById(id).then((usuario)=>{
+                if(!usuario){
+                    return  res.json({  
+                        "status":true,
+                        "message":"no se encontro ningun usuario con la siguiente id",
+                        "Data": id}); 
+                }else{
+                    const {_id,contrasena,__v,...resto}=usuario._doc
+                    res.json(resto);
+                }
+            });
+    
+        }else{
+            return  res.json({  
+                "status":true,
+                "message":"El id del usuario es incorrecto",
+                "Data": id}); 
+        }
+    } catch (error) {
+        console.log(error)
+    }
+    
+
+    
+};
+
 const getAll = async(req,res) => {
 
     try{
@@ -17,7 +48,7 @@ const getAll = async(req,res) => {
 const register = async (req, res) => {
     try {
         const {nombreUsuario, nombre,apellido, correo, contrasena,rol} = req.body;
-        const  user = await Usuario.find({correo});
+        const  user = await Usuario.find({nombreUsuario});
         if(user.length !== 0){
            return res.status(409).json({ mensaje:`Ya existe un usuario con el siguiente correo ${correo}` });
         }else{
@@ -41,6 +72,62 @@ const register = async (req, res) => {
 };
 
 
-module.exports={
-    register,getAll
+const login = async( req,res) => {
+    const {correo,contrasena} = req.body;
+    Usuario.findOne({correo}).then((usuario)=>{
+        if(!usuario){
+
+            return res.status(409).json({
+                "status":true,
+                "message":" El usuario con el siguiente correo no fue encontraro ",
+                "id_Data": correo,
+            })
+        }
+        bcrypt.compare(contrasena, usuario.contrasena).then((esCorrecta)=>{
+            if(esCorrecta){
+                const token = jwt.sign({ id:usuario.id , correo:usuario.correo }, 'moveraenv',{
+                    expiresIn:'1m' /* 1 minuto */ 
+
+                });
+                res.status(200).json({
+                    "status":true,
+                    "message":" Usuario Logeado correctamente ",
+                    usuario:token
+                })
+            }else{
+                return res.status(409).json({mensaje: "contraseña Incorrecta"})
+            }
+        })
+    })
+};
+
+const deleteUser= async (req,res)=>{
+    try {
+        const id = req.params.id
+        await Usuario.deleteOne({_id:id})
+        res.json({
+            "status":true,
+            "message":"Usuario Eliminado Correctamente",
+            "id_Data": id
+        })
+    } catch (error) {
+        res.json({message:error.message})
+    }
+}
+
+const UpdateUser = async (req,res) =>{
+    try {
+        const id = req.params.id
+        await Usuario.findByIdAndUpdate({_id:id},req.body)
+        res.status(200).json({
+            "status":true,
+            "message":"Registro Actualizado Correctamente",
+            "id_Data": id
+        })
+    } catch (error) {
+        res.json({message:error.message})
+    }
+}
+module.exports = {
+    getUser,register,login,getAll,deleteUser,UpdateUser
 }
