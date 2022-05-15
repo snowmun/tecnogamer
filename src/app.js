@@ -1,13 +1,16 @@
 require('dotenv').config();
+require('./database/db')
 const express = require ('express');
-// const router = require ('./route/routes.js');
+const router = require ('./route/router.js');
 const cors = require('cors');
-// const db = require('./database/db')
 // const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
+
+app.use('/',router)
+
 
 app.listen(PORT,()=>{
     console.log(`backend montado con exito en el puerto ${PORT}`)
