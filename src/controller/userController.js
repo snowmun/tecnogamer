@@ -72,6 +72,18 @@ const register = async (req, res) => {
             bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
                 const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
                 const newUser = await nuevoUsuario.save();
+                if(newUser){
+                    res.status(200).json({  
+                    "status":true,
+                    "message":"Usuario agregado correctamente",
+                    "Data": newUser});
+                }else{
+                    res.status(409).json({
+                    "status":true,
+                    "message":"No se pudo crear el usuario",
+                    "id_Data": null
+                 });
+                }
                 // .then((usuario) => {
                 //     res.status(200).json({  
                 //     "status":true,
