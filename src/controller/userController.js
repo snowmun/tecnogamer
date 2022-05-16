@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const getUser = async( req,res) => {
     
     try {
-        const {id} = req.user;
+        const {id} = req.params;
         if(id.length === 24){
             Usuario.findById(id).then((usuario)=>{
                 if(!usuario){
@@ -47,27 +47,41 @@ const getAll = async(req,res) => {
 
 const register = async (req, res) => {
     try {
-        const {nombreUsuario, nombre,apellido, correo, contrasena,rol} = req.body;
+        const {nombreUsuario, nombre,apellido, correo, contrasena,direccion} = req.body;
         const  user = await Usuario.find({nombreUsuario});
-        if(user.length !== 0){
-           return res.status(409).json({ mensaje:`Ya existe un usuario con el siguiente correo ${correo}` });
-        }else{
-           bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
-            const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,rol,contrasena: contrasenaHasheada});
-            const newUser = await nuevoUsuario.save();
-              /*.then((usuario) => {
-                res.status(200).json({  
+        const  userCorreo = await Usuario.find({correo});
+        if(!nombre || !nombreUsuario || !apellido || !correo || !contrasena || !direccion){
+            return res.status(409).json({
                 "status":true,
-                "message":"Usuario agregado correctamente",
-                "Data": nuevoUsuario});
-              })
-              .catch((error) => console.error(error));*/
-
-            });
-        }
-  
-    } catch (error) {
-        console.error(error)
+                "message":"uno o más campos no han sido rellenados",
+                "id_Data": req.body
+            })
+        }else if (user.length !== 0) {
+            return res.status(409).json({
+                "status":true,
+                "message":"Ya existe un usuario registrado con este nombre",
+                "id_Data": nombreUsuario
+            })
+        }else if (userCorreo.length !== 0) {
+            return res.status(409).json({
+                "status":true,
+                "message":"No se pueden crear más de un usuario por correo",
+                "id_Data": correo
+            })
+        }else{
+            bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
+                const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
+                const newUser = await nuevoUsuario.save();
+                // .then((usuario) => {
+                //     res.status(200).json({  
+                //     "status":true,
+                //     "message":"Usuario agregado correctamente",
+                //     "Data": nuevoUsuario});
+                // })
+                // .catch((error) => console.error(error));
+        })};
+        }catch (error) {
+            console.error(error)
     }
 };
 
