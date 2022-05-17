@@ -29,9 +29,6 @@ const getUser = async( req,res) => {
     } catch (error) {
         console.log(error)
     }
-    
-
-    
 };
 
 const getAll = async(req,res) => {
@@ -43,7 +40,6 @@ const getAll = async(req,res) => {
         res.json({message:error.message})
     }
 };
-
 
 const register = async (req, res) => {
     try {
@@ -72,18 +68,6 @@ const register = async (req, res) => {
             bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
                 const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
                 const newUser = await nuevoUsuario.save();
-                if(newUser){
-                    res.status(200).json({  
-                    "status":true,
-                    "message":"Usuario agregado correctamente",
-                    "Data": newUser});
-                }else{
-                    res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo crear el usuario",
-                    "id_Data": null
-                 });
-                }
                 // .then((usuario) => {
                 //     res.status(200).json({  
                 //     "status":true,
@@ -97,16 +81,15 @@ const register = async (req, res) => {
     }
 };
 
-
 const login = async( req,res) => {
-    const {correo,contrasena} = req.body;
-    Usuario.findOne({correo}).then((usuario)=>{
+   
+    const {nombreUsuario,contrasena} = req.body;
+    Usuario.findOne({nombreUsuario}).then((usuario)=>{
         if(!usuario){
-
             return res.status(409).json({
                 "status":true,
-                "message":" El usuario con el siguiente correo no fue encontraro ",
-                "id_Data": correo,
+                "message":" El usuario no fue encontraro ",
+                "id_Data": nombreUsuario,
             })
         }
         bcrypt.compare(contrasena, usuario.contrasena).then((esCorrecta)=>{
@@ -139,7 +122,7 @@ const deleteUser= async (req,res)=>{
     } catch (error) {
         res.json({message:error.message})
     }
-}
+};
 
 const UpdateUser = async (req,res) =>{
     try {
@@ -153,7 +136,8 @@ const UpdateUser = async (req,res) =>{
     } catch (error) {
         res.json({message:error.message})
     }
-}
+};
+
 module.exports = {
     getUser,register,login,getAll,deleteUser,UpdateUser
 }
