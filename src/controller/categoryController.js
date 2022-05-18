@@ -34,7 +34,7 @@ const getAll = async(req,res) => {
     }
 };
 
-const register = async (req, res) => {
+const categoryregister = async (req, res) => {
     try {
         const {nombreCategoria} = req.body;
         const categoria = await Categoria.find({nombreCategoria});
@@ -67,5 +67,5 @@ const register = async (req, res) => {
 module.exports ={
     register,
     getAll,
-    getCategoria
+    categoryregister
 }

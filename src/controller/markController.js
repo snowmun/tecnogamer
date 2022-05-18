@@ -36,7 +36,7 @@ const getAll = async(req,res) => {
     }
 };
 
-const register = async (req, res) => {
+const markregister = async (req, res) => {
     try {
         const {nombreMarca} = req.body;
         const  marca = await Marca.find({nombreMarca});
@@ -67,7 +67,7 @@ const register = async (req, res) => {
 };
 
 module.exports ={
-    register,
+    markregister,
     getAll,
     getMarca
 }
