@@ -18,8 +18,13 @@ router.get('/api/v0/onemark/:id', controllerMarcas.getMarca);
 router.post('/api/v0/markregister',controllerMarcas.markregister);
 
 //Rutas Categoria
-router.get('/api/v0/allcategory',controllerCategoria.getAll);
-router.get('/api/v0/category/:id', controllerCategoria.getCategoria);
+router.get('/api/v0/allcategory',controllerCategoria.getAllCategory);
+router.get('/api/v0/category/:id', controllerCategoria.getCategory);
 router.post('/api/v0/categoryregister',controllerCategoria.categoryregister);
+router.put('/api/v0/updatecateogry/:id',controllerCategoria.updateCategory);
+router.delete('/api/v0/deletecategory/:id',controllerCategoria.deleteCategory);
+
+
+
 
 module.exports = router;

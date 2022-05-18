@@ -1,6 +1,6 @@
 const Categoria = require("../model/categoriasModel");
 
-const getCategoria = async( req,res) => {
+const getCategory = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
@@ -8,16 +8,16 @@ const getCategoria = async( req,res) => {
             if(!categoria){
                 return  res.json({  
                     "status":true,
-                    "message":"no se encontro ninguna marca con la siguiente id",
+                    "message":"no se encontro ninguna categoria con la siguiente id",
                     "Data": id}); 
             }else{
-                const {nombreCategoria}=categoria._doc
-                res.json(nombreCategoria);
+                const datosCategory=categoria
+                res.json(datosCategory);
             }
         }else{
-            res.json({  
+            return res.json({  
             "status":true,
-            "message":"El id de la marca es incorrecto",
+            "message":"El id de la categoria es incorrecto",
             "Data": id}); 
         }
     } catch (error) {
@@ -25,7 +25,7 @@ const getCategoria = async( req,res) => {
     }
 };
 
-const getAll = async(req,res) => {
+const getAllCategory = async(req,res) => {
     try{
         const allCategoria = await Categoria.find();
         res.status(200).json(allCategoria);
@@ -64,8 +64,49 @@ const categoryregister = async (req, res) => {
     }
 };
 
+
+const updateCategory = async (req,res) =>{
+    try {
+        const {id} = req.params;
+        const {nombreCategoria} = req.body;
+        if(nombreCategoria !== ''){
+            await Categoria.findByIdAndUpdate(id,req.body);
+            res.status(200).json({
+                "status":true,
+                "message":"Registro Actualizado Correctamente",
+                "id_Data": req.body
+            });
+        }else{
+            res.status(409).json({
+                "status":true,
+                "message":"El campo nombre categoria debe tener datos",
+                "id_Data": nombreCategoria
+            });
+        }
+    } catch (error) {
+        res.json({message:error.message})
+    }
+};
+
+const deleteCategory= async (req,res)=>{
+    try {
+        const {id} = req.params;
+        await Categoria.deleteOne({id});
+
+        res.json({
+            "status":true,
+            "message":"Categoria Eliminada Correctamente",
+            "id_Data": id
+        });
+    } catch (error) {
+        res.json({message:error.message})
+    }
+};
+
 module.exports ={
-    register,
-    getAll,
-    categoryregister
+    getCategory,
+    getAllCategory,
+    categoryregister,
+    updateCategory,
+    deleteCategory
 }
