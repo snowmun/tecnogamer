@@ -2,9 +2,7 @@ const Marca = require("../model/marcasModel");
 
 const getMarca = async( req,res) => {
     try {
-
         const {id} = req.params;
-        console.log(id)
         if(id.length === 24){
             const marca = Marca.findById(id);
             if(!marca){
@@ -17,10 +15,10 @@ const getMarca = async( req,res) => {
                 res.json(nombreMarca);
             }
         }else{
-            return  res.json({  
-                "status":true,
-                "message":"El id de la marca es incorrecto",
-                "Data": id}); 
+            res.json({  
+            "status":true,
+            "message":"El id de la marca es incorrecto",
+            "Data": id}); 
         }
     } catch (error) {
         console.log(error)
@@ -36,30 +34,30 @@ const getAll = async(req,res) => {
     }
 };
 
-const register = async (req, res) => {
+const register= async (req, res) => {
     try {
         const {nombreMarca} = req.body;
         const  marca = await Marca.find({nombreMarca});
-        if(!marca){
+        if(marca.length > 0){
             return res.status(409).json({
                 "status":true,
                 "message":"Ya se encuentra registrada está marca",
                 "Data": nombreMarca
-            })
+            });
         }else{
             const nuevaMarca = new Marca({nombreMarca});
             const infoNewMarca = await nuevaMarca.save();
             if(infoNewMarca){
-                    res.status(200).json({  
-                    "status":true,
-                    "message":"Marca agregada correctamente",
-                    "Data": infoNewMarca}); 
-                }else{
-                    return res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo agregar correctamente",
-                    "Data": infoNewMarca});
-                }
+                res.status(200).json({  
+                "status":true,
+                "message":"Marca agregada correctamente",
+                "Data": infoNewMarca}); 
+            }else{
+                res.status(409).json({
+                "status":true,
+                "message":"No se pudo agregar correctamente",
+                "Data": nuevaMarca});
+            }
         };
         }catch (error) {
             console.error(error)

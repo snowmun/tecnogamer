@@ -15,10 +15,10 @@ const getCategoria = async( req,res) => {
                 res.json(nombreCategoria);
             }
         }else{
-            return  res.json({  
-                "status":true,
-                "message":"El id de la marca es incorrecto",
-                "Data": id}); 
+            res.json({  
+            "status":true,
+            "message":"El id de la marca es incorrecto",
+            "Data": id}); 
         }
     } catch (error) {
         console.log(error)
@@ -38,7 +38,7 @@ const register = async (req, res) => {
     try {
         const {nombreCategoria} = req.body;
         const categoria = await Categoria.find({nombreCategoria});
-        if(!categoria){
+        if(categoria.length > 0){
             return res.status(409).json({
                 "status":true,
                 "message":"Ya se encuentra registrada está marca",
@@ -56,7 +56,7 @@ const register = async (req, res) => {
                     return res.status(409).json({
                     "status":true,
                     "message":"No se pudo agregar correctamente",
-                    "Data": infoNewCategoria});
+                    "Data": nuevaCategoria});
                 }
         };
         }catch (error) {
