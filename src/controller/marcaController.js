@@ -4,7 +4,7 @@ const getMarca = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
-            const marca = Marca.findById(id);
+            const marca = await Marca.findById(id);
             if(!marca){
                 return  res.json({  
                     "status":true,
@@ -46,8 +46,8 @@ const register= async (req, res) => {
             });
         }else{
             const nuevaMarca = new Marca({nombreMarca});
-            const infoNewMarca = await nuevaMarca.save();
-            if(infoNewMarca){
+            if(nuevaMarca){
+                const infoNewMarca = await nuevaMarca.save();
                 res.status(200).json({  
                 "status":true,
                 "message":"Marca agregada correctamente",

@@ -67,8 +67,8 @@ const register = async (req, res) => {
         }else{
             bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
                 const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
-                const newUser = await nuevoUsuario.save();
-                if(newUser){
+                if(nuevoUsuario){
+                    const newUser = await nuevoUsuario.save();
                     res.status(200).json({  
                     "status":true,
                     "message":"Usuario agregado correctamente",

@@ -4,7 +4,7 @@ const getCategoria = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
-            const categoria = Categoria.findById(id);
+            const categoria = await Categoria.findById(id);
             if(!categoria){
                 return  res.json({  
                     "status":true,
@@ -46,18 +46,18 @@ const register = async (req, res) => {
             })
         }else{
             const nuevaCategoria= new Categoria({nombreCategoria});
-            const infoNewCategoria= await nuevaCategoria.save();
-            if(infoNewCategoria){
-                    res.status(200).json({  
-                    "status":true,
-                    "message":"Categoriaagregada correctamente",
-                    "Data": infoNewCategoria}); 
-                }else{
-                    return res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo agregar correctamente",
-                    "Data": nuevaCategoria});
-                }
+            if(nuevaCategoria){
+                const infoNewCategoria= await nuevaCategoria.save();
+                res.status(200).json({  
+                "status":true,
+                "message":"Categoriaagregada correctamente",
+                "Data": infoNewCategoria}); 
+            }else{
+                return res.status(409).json({
+                "status":true,
+                "message":"No se pudo agregar correctamente",
+                "Data": nuevaCategoria});
+            }
         };
         }catch (error) {
             console.error(error)
