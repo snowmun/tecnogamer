@@ -1,18 +1,18 @@
-const Marca = require("../model/marcasModel");
+const Categoria = require("../model/categoriasModel");
 
-const getMarca = async( req,res) => {
+const getCategoria = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
-            const marca = await Marca.findById(id);
-            if(!marca){
+            const categoria = await Categoria.findById(id);
+            if(!categoria){
                 return  res.json({  
                     "status":true,
                     "message":"no se encontro ninguna marca con la siguiente id",
                     "Data": id}); 
             }else{
-                const {nombreMarca}=marca._doc
-                res.json(nombreMarca);
+                const {nombreCategoria}=categoria._doc
+                res.json(nombreCategoria);
             }
         }else{
             res.json({  
@@ -27,36 +27,36 @@ const getMarca = async( req,res) => {
 
 const getAll = async(req,res) => {
     try{
-        const allMarca = await Marca.find();
-        res.status(200).json(allMarca);
+        const allCategoria = await Categoria.find();
+        res.status(200).json(allCategoria);
     }catch(error){
         res.json({message:error.message})
     }
 };
 
-const register= async (req, res) => {
+const categoryregister = async (req, res) => {
     try {
-        const {nombreMarca} = req.body;
-        const  marca = await Marca.find({nombreMarca});
-        if(marca.length > 0){
+        const {nombreCategoria} = req.body;
+        const categoria = await Categoria.find({nombreCategoria});
+        if(categoria.length > 0){
             return res.status(409).json({
                 "status":true,
                 "message":"Ya se encuentra registrada está marca",
-                "Data": nombreMarca
-            });
+                "Data": nombreCategoria
+            })
         }else{
-            const nuevaMarca = new Marca({nombreMarca});
-            if(nuevaMarca){
-                const infoNewMarca = await nuevaMarca.save();
+            const nuevaCategoria= new Categoria({nombreCategoria});
+            if(nuevaCategoria){
+                const infoNewCategoria= await nuevaCategoria.save();
                 res.status(200).json({  
                 "status":true,
-                "message":"Marca agregada correctamente",
-                "Data": infoNewMarca}); 
+                "message":"Categoriaagregada correctamente",
+                "Data": infoNewCategoria}); 
             }else{
-                res.status(409).json({
+                return res.status(409).json({
                 "status":true,
                 "message":"No se pudo agregar correctamente",
-                "Data": nuevaMarca});
+                "Data": nuevaCategoria});
             }
         };
         }catch (error) {
@@ -67,5 +67,5 @@ const register= async (req, res) => {
 module.exports ={
     register,
     getAll,
-    getMarca
+    categoryregister
 }

@@ -41,7 +41,7 @@ const getAll = async(req,res) => {
     }
 };
 
-const register = async (req, res) => {
+const useregister = async (req, res) => {
     try {
         const {nombreUsuario, nombre,apellido, correo, contrasena,direccion} = req.body;
         const  user = await Usuario.find({nombreUsuario});
@@ -85,7 +85,7 @@ const register = async (req, res) => {
     }
 };
 
-const login = async( req,res) => {
+const userlogin = async( req,res) => {
    
     const {nombreUsuario,contrasena} = req.body;
     Usuario.findOne({nombreUsuario}).then((usuario)=>{
@@ -143,5 +143,5 @@ const UpdateUser = async (req,res) =>{
 };
 
 module.exports = {
-    getUser,register,login,getAll,deleteUser,UpdateUser
+    getUser,useregister,userlogin,getAll,deleteUser,UpdateUser
 }
