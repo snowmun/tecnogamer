@@ -3,6 +3,7 @@ const router = express.Router();
 const controllerUser = require ('../controller/UserController');
 const controllerMark = require ('../controller/markController');
 const controllerCategory = require ('../controller/categoryController');
+const controllerProduct = require ('../controller/productController');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -26,6 +27,13 @@ router.get('/api/v0/onecategory/:id', controllerCategory.getCategory);
 router.post('/api/v0/categoryregister',controllerCategory.categoryregister);
 router.put('/api/v0/updatecateogry/:id',controllerCategory.updateCategory);
 router.delete('/api/v0/deletecategory/:id',controllerCategory.deleteCategory);
+
+// producto
+router.get('/api/v0/allproduct',controllerProduct.allProduct);
+router.get('/api/v0/oneproduct/:id', controllerProduct.oneProduct);
+router.post('/api/v0/registerproduct',controllerProduct.registerProduct);
+router.put('/api/v0/updateproduct/:id',controllerProduct.updateProduct);
+router.delete('/api/v0/deleteproduct/:id',controllerProduct.deleteProduct);
 
 
 
