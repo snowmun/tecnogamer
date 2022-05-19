@@ -10,24 +10,30 @@ const getUser = async( req,res) => {
         if(id.length === 24){
             Usuario.findById(id).then((usuario)=>{
                 if(!usuario){
-                    return  res.json({  
+                    return   res.status(409).json({  
                         "status":true,
                         "message":"no se encontro ningun usuario con la siguiente id",
                         "Data": id}); 
                 }else{
                     const {_id,contrasena,__v,...resto}=usuario._doc
-                    res.json(resto);
+                    return  res.status(200).json({  
+                        "status":true,
+                        "message":"usuario encontrado",
+                        "Data": resto}); 
                 }
             });
     
         }else{
-            return  res.json({  
+            return   res.status(409).json({  
                 "status":true,
                 "message":"El id del usuario es incorrecto",
                 "Data": id}); 
         }
     } catch (error) {
-        console.log(error)
+        return   res.status(409).json({  
+            "status":true,
+            "message":"El id del usuario es incorrecto",
+            "Data": error}); 
     }
 };
 
@@ -35,7 +41,10 @@ const getAll = async(req,res) => {
 
     try{
         const allUser = await Usuario.find()
-        res.status(200).json(allUser)
+        return   res.status(200).json({  
+            "status":true,
+            "message":"Usuarios encontrados",
+            "Data": allUser}); 
     }catch(error){
         res.json({message:error.message})
     }
@@ -67,21 +76,23 @@ const useregister = async (req, res) => {
         }else{
             bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
                 const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
-                if(nuevoUsuario){
-                    const newUser = await nuevoUsuario.save();
+                await nuevoUsuario.save().then((usuario) => {
                     res.status(200).json({  
                     "status":true,
                     "message":"Usuario agregado correctamente",
-                    "Data": newUser}); 
-                }else{
-                    return res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo agregar correctamente el usuario",
-                    "Data": nombreUsuario});
-                }
+                    "Data": usuario});
+                  }).catch((error) => {
+                    res.status(409).json({  
+                        "status":true,
+                        "message":"El usuairo no fue agregado",
+                        "Data": error});
+                  });
         })};
         }catch (error) {
-            console.error(error)
+            return  res.status(409).json({  
+                        "status":true,
+                        "message":"El usuairo no fue agregado",
+                        "Data": error});
     }
 };
 
@@ -102,13 +113,16 @@ const userlogin = async( req,res) => {
                     expiresIn:'1m' /* 1 minuto */ 
 
                 });
-                res.status(200).json({
+                return res.status(200).json({
                     "status":true,
                     "message":" Usuario Logeado correctamente ",
                     usuario:token
                 })
             }else{
-                return res.status(409).json({mensaje: "contraseña Incorrecta"})
+                return res.status(409).json({
+                    "status":true,
+                    "message":"  contraseña incorrecta ",
+                })
             }
         })
     })
@@ -118,13 +132,16 @@ const deleteUser= async (req,res)=>{
     try {
         const id = req.params.id
         await Usuario.deleteOne({_id:id})
-        res.json({
+        return  res.status(200)({
             "status":true,
             "message":"Usuario Eliminado Correctamente",
             "id_Data": id
         })
     } catch (error) {
-        res.json({message:error.message})
+       return   res.status(409)({
+            "status":true,
+            "message":error,
+        })
     }
 };
 
@@ -132,13 +149,16 @@ const UpdateUser = async (req,res) =>{
     try {
         const id = req.params.id
         await Usuario.findByIdAndUpdate({_id:id},req.body)
-        res.status(200).json({
+        return res.status(200).json({
             "status":true,
             "message":"Registro Actualizado Correctamente",
             "id_Data": id
         })
     } catch (error) {
-        res.json({message:error.message})
+        return res.status(409).json({
+            "status":true,
+            "message":error,
+        })
     }
 };
 
