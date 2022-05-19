@@ -1,17 +1,17 @@
 const Marca = require("../model/marcasModel");
 
-const getMarca = async( req,res) => {
+const getMark = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
-            const marca = await Marca.findById(id);
-            if(!marca){
+            const mark = await Marca.findById(id);
+            if(!mark){
                 return  res.json({  
                     "status":true,
                     "message":"no se encontro ninguna marca con la siguiente id",
                     "Data": id}); 
             }else{
-                const {nombreMarca}=marca._doc
+                const nombreMarca=mark._doc
                 res.json(nombreMarca);
             }
         }else{
@@ -27,8 +27,8 @@ const getMarca = async( req,res) => {
 
 const getAll = async(req,res) => {
     try{
-        const allMarca = await Marca.find();
-        res.status(200).json(allMarca);
+        const allMark = await Marca.find();
+        res.status(200).json(allMark);
     }catch(error){
         res.json({message:error.message})
     }
@@ -37,8 +37,8 @@ const getAll = async(req,res) => {
 const markregister = async (req, res) => {
     try {
         const {nombreMarca} = req.body;
-        const  marca = await Marca.find({nombreMarca});
-        if(marca.length > 0){
+        const  mark = await Marca.find({nombreMarca});
+        if(mark.length > 0){
             return res.status(409).json({
                 "status":true,
                 "message":"Ya se encuentra registrada está marca",
@@ -64,8 +64,47 @@ const markregister = async (req, res) => {
     }
 };
 
+const updateMark = async (req,res) =>{
+    try {
+        const {id} = req.params;
+        const {nombreMarca} = req.body;
+        if(nombreMarca !== ''){
+            await Marca.findByIdAndUpdate(id,req.body);
+            res.status(200).json({
+                "status":true,
+                "message":"Registro Actualizado Correctamente",
+                "id_Data": req.body
+            });
+        }else{
+            res.status(409).json({
+                "status":true,
+                "message":"El campo nombre marca debe tener datos",
+                "id_Data": nombreMarca
+            });
+        }
+    } catch (error) {
+        res.json({message:error.message})
+    }
+};
+
+const deleteMark= async (req,res)=>{
+    try {
+        const {id} = req.params;
+        await Marca.deleteOne({id});
+        res.json({
+            "status":true,
+            "message":"Marca Eliminada Correctamente",
+            "id_Data": id
+        });
+    } catch (error) {
+        res.json({message:error.message})
+    }
+};
+
 module.exports ={
     markregister,
     getAll,
-    getMarca
+    getMark,
+    updateMark,
+    deleteMark
 }
