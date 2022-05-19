@@ -63,12 +63,12 @@ const markregister = async (req, res) => {
 
             if(nuevaMarca){
                 const infoNewMarca = await nuevaMarca.save();
-                res.status(200).json({  
+                return res.status(200).json({  
                 "status":true,
                 "message":"Marca agregada correctamente",
                 "Data": infoNewMarca}); 
             }else{
-                res.status(409).json({
+               return res.status(409).json({
                 "status":true,
                 "message":"No se pudo agregar correctamente",
                 "Data": nuevaMarca});
