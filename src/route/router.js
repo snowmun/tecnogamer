@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const controllerUser = require ('../controller/UserController');
-const controllerMarcas = require ('../controller/markController');
-const controllerCategoria = require ('../controller/categoryController');
+const controllerMark = require ('../controller/markController');
+const controllerCategory = require ('../controller/categoryController');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -13,16 +13,19 @@ router.delete('/api/v0/deleteuser/:id',controllerUser.deleteUser);
 router.put('/api/v0/updateuser/:id',controllerUser.UpdateUser);
 
 //Rutas Marca
-router.get('/api/v0/allmark',controllerMarcas.getAll);
-router.get('/api/v0/onemark/:id', controllerMarcas.getMarca);
-router.post('/api/v0/markregister',controllerMarcas.markregister);
+router.get('/api/v0/allmark',controllerMark.getAll);
+router.get('/api/v0/onemark/:id', controllerMark.getMark);
+router.post('/api/v0/markregister',controllerMark.markregister);
+router.put('/api/v0/updatemark/:id',controllerMark.updateMark);
+router.delete('/api/v0/deletemark/:id',controllerMark.deleteMark);
+
 
 //Rutas Categoria
-router.get('/api/v0/allcategory',controllerCategoria.getAllCategory);
-router.get('/api/v0/category/:id', controllerCategoria.getCategory);
-router.post('/api/v0/categoryregister',controllerCategoria.categoryregister);
-router.put('/api/v0/updatecateogry/:id',controllerCategoria.updateCategory);
-router.delete('/api/v0/deletecategory/:id',controllerCategoria.deleteCategory);
+router.get('/api/v0/allcategory',controllerCategory.getAllCategory);
+router.get('/api/v0/onecategory/:id', controllerCategory.getCategory);
+router.post('/api/v0/categoryregister',controllerCategory.categoryregister);
+router.put('/api/v0/updatecateogry/:id',controllerCategory.updateCategory);
+router.delete('/api/v0/deletecategory/:id',controllerCategory.deleteCategory);
 
 
 
