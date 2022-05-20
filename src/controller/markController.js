@@ -50,7 +50,6 @@ const markregister = async (req, res) => {
     try {
         const {nombreMarca} = req.body;
         const  mark = await Marca.find({nombreMarca});
-        console.log(mark)
 
         if(mark.length > 0){
             return res.status(409).json({

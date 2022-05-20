@@ -4,23 +4,23 @@ const oneProduct = async( req,res) => {
     try {
         const {id} = req.params;
         if(id.length === 24){
-            const mark = await Marca.findById(id);
-            if(!mark){
+            const product = await Producto.findById(id);
+            if(!product){
                 return  res.status(409).json({  
                     "status":true,
-                    "message":"no se encontro ninguna marca con la siguiente id",
+                    "message":"no se encontro ningun producto con la siguiente id",
                     "Data": id}); 
             }else{
-                const nombreMarca=mark._doc
+                const datosProducto=product._doc
                 return  res.status(200).json({  
                     "status":true,
-                    "message":"Marca encontrada con exito",
-                    "Data": nombreMarca}); 
+                    "message":"Producto encontrada con exito",
+                    "Data": datosProducto}); 
             }
         }else{
            return  res.status(409).json({  
             "status":true,
-            "message":"El id de la marca es incorrecto",
+            "message":"El id del producto es incorrecto",
             "Data": id}); 
         }
     } catch (error) {
@@ -33,11 +33,11 @@ const oneProduct = async( req,res) => {
 
 const allProduct = async(req,res) => {
     try{
-        const allMark = await Marca.find();
+        const allProduct = await Producto.find();
         return  res.status(200).json({  
             "status":true,
-            "message":"las siguientes marcas fueron encontradas",
-            "Data": allMark}); 
+            "message":"las siguientes producto fueron encontradas",
+            "Data": allProduct}); 
     }catch(error){
         return  res.status(409).json({  
             "status":true,
@@ -48,30 +48,29 @@ const allProduct = async(req,res) => {
 
 const registerProduct = async (req, res) => {
     try {
-        const {nombreMarca} = req.body;
-        const  mark = await Marca.find({nombreMarca});
-        console.log(mark)
-
-        if(mark.length > 0){
+        const {nombreProducto} = req.body;
+       
+        const  product = await Producto.find({nombreProducto});
+        
+        if(product.length > 0){
             return res.status(409).json({
                 "status":true,
-                "message":"Ya se encuentra registrada está marca",
-                "Data": nombreMarca
+                "message":"Ya se encuentra registrado este producto",
+                "Data": nombreProducto
             });
         }else{
-            const nuevaMarca = new Marca({nombreMarca});
-
-            if(nuevaMarca){
-                const infoNewMarca = await nuevaMarca.save();
+            const nuevaProducto = new Producto(req.body);
+            if(nuevaProducto){
+                const infoNewProducto = await nuevaProducto.save();
                 return res.status(200).json({  
                 "status":true,
-                "message":"Marca agregada correctamente",
-                "Data": infoNewMarca}); 
+                "message":"Producto agregada correctamente",
+                "Data": infoNewProducto}); 
             }else{
                return res.status(409).json({
                 "status":true,
                 "message":"No se pudo agregar correctamente",
-                "Data": nuevaMarca});
+                "Data": nuevaProducto});
             }
         };
         }catch (error) {
@@ -85,9 +84,9 @@ const registerProduct = async (req, res) => {
 const updateProduct = async (req,res) =>{
     try {
         const {id} = req.params;
-        const {nombreMarca} = req.body;
-        if(nombreMarca !== ''){
-            await Marca.findByIdAndUpdate(id,req.body);
+        const {nombreProducto} = req.body;
+        if(nombreProducto !== ''){
+            await Producto.findByIdAndUpdate(id,req.body);
             return res.status(200).json({
                 "status":true,
                 "message":"Registro Actualizado Correctamente",
@@ -96,8 +95,8 @@ const updateProduct = async (req,res) =>{
         }else{
             return res.status(409).json({
                 "status":true,
-                "message":"El campo nombre marca debe tener datos",
-                "id_Data": nombreMarca
+                "message":"El campo nombre producto debe tener datos",
+                "id_Data": nombreProducto
             });
         }
     } catch (error) {
@@ -111,10 +110,12 @@ const updateProduct = async (req,res) =>{
 const deleteProduct= async (req,res)=>{
     try {
         const {id} = req.params;
-        await Marca.deleteOne({id});
-       return res.status(200).json({
+
+        await Producto.deleteOne({id});
+        
+        return res.status(200).json({
             "status":true,
-            "message":"Marca Eliminada Correctamente",
+            "message":"Producto Eliminada Correctamente",
             "id_Data": id
         });
     } catch (error) {
