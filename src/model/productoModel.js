@@ -1,4 +1,4 @@
-const {model , Schema,mongoose} = require("mongoose");
+const {model , Schema} = require("mongoose");
 
 const productoSchema = new Schema ({
     nombreProducto:{type:String,require: true},
@@ -18,6 +18,7 @@ const productoSchema = new Schema ({
 
 });
 
-productoSchema.plugin(require('mongoose-autopopulate'))
+productoSchema.plugin(require('mongoose-autopopulate'));
+
 module.exports = model('Producto', productoSchema);
 
