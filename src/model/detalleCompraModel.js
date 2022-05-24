@@ -1,4 +1,5 @@
 const {model , Schema} = require("mongoose");
+//orlando modificar 
 
 const detalleVentaSchema = new Schema ({
     cantidad:{type:Number,require: true},

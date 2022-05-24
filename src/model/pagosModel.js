@@ -1,5 +1,5 @@
 const {model , Schema} = require("mongoose");
-
+//orlando
 const pagoSchema = new Schema ({
     tipoPago:{type:String,require: true},
     usuarioId: [{

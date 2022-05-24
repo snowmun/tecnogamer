@@ -61,7 +61,7 @@ const registerProduct = async (req, res) => {
         }else{
             const nuevaProducto = new Producto(req.body);
             if(nuevaProducto){
-                const infoNewProducto = await nuevaProducto.save();
+                const infoNewProducto = await nuevaProducto.save();        
                 return res.status(200).json({  
                 "status":true,
                 "message":"Producto agregada correctamente",

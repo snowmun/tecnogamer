@@ -1,5 +1,5 @@
 const {model , Schema} = require("mongoose");
-
+//orlando modificar
 const userSchema = new Schema ({
     nombreUsuario:{type:String,require: true},
     correo:{type:String,require: true , unique:true},
