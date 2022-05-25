@@ -1,10 +1,12 @@
 const {model , Schema} = require("mongoose");
-//orlando
+//orlando modificar listo
 const pagoSchema = new Schema ({
     tipoPago:{type:String,require: true},
-    usuarioId: [{
+    estadoPago:{type:String,require: true},
+    fechaPago:{type:String,require: true},
+    compraId: [{
         type: Schema.Types.ObjectId,
-        ref: 'usuario',
+        ref: 'compra',
         autopopulate: true
     }],    
 });

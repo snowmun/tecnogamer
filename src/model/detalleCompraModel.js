@@ -1,10 +1,9 @@
 const {model , Schema} = require("mongoose");
-//orlando modificar 
+//orlando modificar listo 
 
 const detalleVentaSchema = new Schema ({
+    valor:{type:Number,require: true},
     cantidad:{type:Number,require: true},
-    precio:{type:Number,require: true},
-    fechaCompra:{type:Date,require: true},
     productoId: [{
         type: Schema.Types.ObjectId,
         ref: 'producto',

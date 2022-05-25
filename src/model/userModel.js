@@ -1,13 +1,15 @@
 const {model , Schema} = require("mongoose");
-//orlando modificar
+//orlando modificar listo
 const userSchema = new Schema ({
     nombreUsuario:{type:String,require: true},
-    correo:{type:String,require: true , unique:true},
     contrasena:{type:String,require: true},
-    nombre:{type:String,require: true},
-    apellido:{type:String,require: true},
-    direccion:{type:String,require: true},
     rol:{type:Number,require: true},
+    datosPersoId: [{
+        type: Schema.Types.ObjectId,
+        ref: 'datosPersonales',
+        autopopulate: true
+    }],
 });
 
+pagoSchema.plugin(require('mongoose-autopopulate'));
 module.exports = model('User', userSchema);
