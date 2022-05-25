@@ -11,5 +11,5 @@ const userSchema = new Schema ({
     }],
 });
 
-pagoSchema.plugin(require('mongoose-autopopulate'));
+userSchema.plugin(require('mongoose-autopopulate'));
 module.exports = model('User', userSchema);

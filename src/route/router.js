@@ -5,7 +5,7 @@ const controllerMark = require ('../controller/markController');
 const controllerCategory = require ('../controller/categoryController');
 const controllerProduct = require ('../controller/productController');
 const controllerPago = require ('../controller/paymentController');
-const controllerFactura = require ('../controller/billingController');
+const controllerdetalleCompra = require ('../controller/purchaseDetailController');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -44,11 +44,12 @@ router.post('/api/v0/registerPayment',controllerPago.registerPayment);
 router.put('/api/v0/updatePayment/:id',controllerPago.updatePayment);
 router.delete('/api/v0/deletePayment/:id',controllerPago.deletePayment);
 
-//factura
-router.get('/api/v0/allBilling',controllerFactura.allBilling);
-router.get('/api/v0/oneBilling/:id', controllerFactura.oneBilling);
-router.post('/api/v0/registerBilling',controllerFactura.registerBilling);
-router.put('/api/v0/updateBilling/:id',controllerFactura.updateBilling);
-router.delete('/api/v0/deleteBilling/:id',controllerFactura.deleteBilling);
+
+//detalle compra
+router.get('/api/v0/allPurchaseDetail',controllerdetalleCompra.allPurchaseDetail);
+router.get('/api/v0/onePurchaseDetail/:id', controllerdetalleCompra.onePurchaseDetail);
+router.post('/api/v0/registerPurchaseDetail',controllerdetalleCompra.registerPurchaseDetail);
+router.put('/api/v0/updatePurchaseDetail/:id',controllerdetalleCompra.updatePurchaseDetail);
+router.delete('/api/v0/deletePurchaseDetail/:id',controllerdetalleCompra.deletePurchaseDetail);
 
 module.exports = router;
