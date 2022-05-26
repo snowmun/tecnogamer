@@ -2,7 +2,7 @@
 const {model , Schema} = require("mongoose");
 const comunaSchema = new Schema ({
     nombre:{type:String,require: true},
-    regionid: [{
+    regionId: [{
         type: Schema.Types.ObjectId,
         ref: 'region',
         autopopulate: true

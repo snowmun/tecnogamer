@@ -7,7 +7,7 @@ const datosPersonalesSchema = new Schema ({
     rut:{type:String,require: true },
     fono:{type:String,require: true },
     correo:{type:String,require: true },
-    fk_usuario: [{
+    usuarioId: [{
         type: Schema.Types.ObjectId,
         ref: 'Direccion',
         autopopulate: true

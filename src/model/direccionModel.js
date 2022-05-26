@@ -6,7 +6,7 @@ const direccionSchema = new Schema ({
     block:{type:String,require: false },
     depto:{type:String,require: false },
     piso:{type:String,require: true },
-    fk_usuario: [{
+    usuarioId: [{
         type: Schema.Types.ObjectId,
         ref: 'Comuna',
         autopopulate: true

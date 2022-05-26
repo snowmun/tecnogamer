@@ -5,12 +5,12 @@ const productoSchema = new Schema ({
     stock:{type:String,require: true , unique:true},
     precio:{type:String,require: true},
     descripcion:{type:String,require: true},
-    categoria: [{
+    categoriaId: [{
         type: Schema.Types.ObjectId,
         ref: 'Categoria',
         autopopulate: true
     }],
-    marca: [{
+    marcaId: [{
         type: Schema.Types.ObjectId,
         ref: 'Marca',
         autopopulate: true
