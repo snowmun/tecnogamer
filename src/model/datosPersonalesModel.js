@@ -7,13 +7,8 @@ const datosPersonalesSchema = new Schema ({
     rut:{type:String,require: true },
     fono:{type:String,require: true },
     correo:{type:String,require: true },
-    usuarioId: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Direccion',
-        autopopulate: true
-    }],
 });
 
 datosPersonalesSchema.plugin(require('mongoose-autopopulate'));
 
-module.exports = model('DatosPeronale', datosPersonalesSchema);
+module.exports = model('datosPeronale', datosPersonalesSchema);

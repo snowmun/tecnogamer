@@ -6,9 +6,14 @@ const direccionSchema = new Schema ({
     block:{type:String,require: false },
     depto:{type:String,require: false },
     piso:{type:String,require: true },
-    usuarioId: [{
+    comunaId: [{
         type: Schema.Types.ObjectId,
         ref: 'Comuna',
+        autopopulate: true
+    }],
+    datosPersonalesId: [{
+        type: Schema.Types.ObjectId,
+        ref: 'datosPeronale',
         autopopulate: true
     }],
 });

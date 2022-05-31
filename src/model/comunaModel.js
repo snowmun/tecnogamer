@@ -10,4 +10,4 @@ const comunaSchema = new Schema ({
 });
 
 comunaSchema.plugin(require('mongoose-autopopulate'));
-module.exports = model('Pago', comunaSchema);
+module.exports = model('Comuna', comunaSchema);
