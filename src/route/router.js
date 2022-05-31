@@ -6,6 +6,7 @@ const controllerCategory = require ('../controller/categoryController');
 const controllerProduct = require ('../controller/productController');
 const controllerPago = require ('../controller/paymentController');
 const controllerdetalleCompra = require ('../controller/purchaseDetailController');
+const controllerComuna = require ('../controller/comunaController');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -51,5 +52,10 @@ router.get('/api/v0/onePurchaseDetail/:id', controllerdetalleCompra.onePurchaseD
 router.post('/api/v0/registerPurchaseDetail',controllerdetalleCompra.registerPurchaseDetail);
 router.put('/api/v0/updatePurchaseDetail/:id',controllerdetalleCompra.updatePurchaseDetail);
 router.delete('/api/v0/deletePurchaseDetail/:id',controllerdetalleCompra.deletePurchaseDetail);
+
+
+//detalle compra
+
+router.post('/api/v0/registerComuna',controllerComuna.registerComuna);
 
 module.exports = router;
