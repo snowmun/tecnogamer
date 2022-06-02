@@ -7,6 +7,7 @@ const controllerProduct = require ('../controller/productController');
 const controllerPago = require ('../controller/paymentController');
 const controllerdetalleCompra = require ('../controller/purchaseDetailController');
 const controllerComuna = require ('../controller/comunaController');
+const contollerRegion = require ('../controller/regionController');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -54,8 +55,10 @@ router.put('/api/v0/updatePurchaseDetail/:id',controllerdetalleCompra.updatePurc
 router.delete('/api/v0/deletePurchaseDetail/:id',controllerdetalleCompra.deletePurchaseDetail);
 
 
-//detalle compra
-
+//Comuna
 router.post('/api/v0/registerComuna',controllerComuna.registerComuna);
 
+//Región
+router.get('/api/v0/allRegion',contollerRegion.getAll);
+router.post('/api/v0/registerRegion', contollerRegion.registerRegion);
 module.exports = router;
