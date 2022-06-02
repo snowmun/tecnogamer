@@ -12,11 +12,10 @@ const getComunas = async( req,res) => {
                         "message":"no se encontro ninguna comuna con la siguiente id",
                         "Data": id}); 
                 }else{
-                    const {_id,__v,...resto}=comuna._doc;
                     return  res.status(200).json({  
                         "status":true,
                         "message":"Comunas encontradas",
-                        "Data": resto}); 
+                        "Data": comuna}); 
                 }
             });
         }else{
