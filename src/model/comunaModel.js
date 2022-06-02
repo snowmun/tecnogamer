@@ -4,7 +4,7 @@ const comunaSchema = new Schema ({
     nombre:{type:String,require: true},
     regionId: [{
         type: Schema.Types.ObjectId,
-        ref: 'region',
+        ref: 'Regione',
         autopopulate: true
     }],    
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {controllerUser,controllerMark,controllerCategory,controllerProduct,
-    controllerPago,controllerdetalleCompra,controllerComuna,} = require("../controller/indexController");
+    controllerPago,controllerdetalleCompra,controllerComuna,controllerRegion} = require("../controller/indexController");
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -53,6 +53,6 @@ router.delete('/api/v0/deletePurchaseDetail/:id',controllerdetalleCompra.deleteP
 router.post('/api/v0/registerComuna',controllerComuna.registerComuna);
 
 //Región
-router.get('/api/v0/allRegion',contollerRegion.getAll);
-router.post('/api/v0/registerRegion', contollerRegion.registerRegion);
+router.get('/api/v0/allRegion',controllerRegion.getAll);
+router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
 module.exports = router;

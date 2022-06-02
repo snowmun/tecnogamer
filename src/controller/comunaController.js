@@ -35,7 +35,7 @@ const getComunas = async( req,res) => {
 
 const registerComuna = async (req, res) => {
     try {
-        const {nombre} = req.body;
+        const {nombre,regionId} = req.body;
         const  comuna = await Comuna.find({nombre});
         if(comuna.length > 0){
             return res.status(409).json({
@@ -44,7 +44,7 @@ const registerComuna = async (req, res) => {
                 "Data": nombre
             });
         }else{
-            const nuevaComuna = new Comuna({nombre});
+            const nuevaComuna = new Comuna({nombre,regionId});
 
             if(nuevaComuna){
                 const infoComuna = await nuevaComuna.save();
@@ -61,8 +61,6 @@ const registerComuna = async (req, res) => {
             }
         };
         }catch (error) {
-            console.log("3 Ya se encuentra registrada está comuna")
-
             return  res.status(409).json({  
                 "status":true,
                 "message":error

@@ -1,10 +1,11 @@
-const controllerUser = require ('./controller/UserController');
-const controllerMark = require ('./controller/markController');
-const controllerCategory = require ('./controller/categoryController');
-const controllerProduct = require ('./controller/productController');
-const controllerPago = require ('./controller/paymentController');
-const controllerdetalleCompra = require ('./controller/purchaseDetailController');
-const controllerComuna = require ('./controller/comunaController');
+const controllerUser = require ('./userController');
+const controllerMark = require ('./markController');
+const controllerCategory = require ('./categoryController');
+const controllerProduct = require ('./productController');
+const controllerPago = require ('./paymentController');
+const controllerdetalleCompra = require ('./purchaseDetailController');
+const controllerComuna = require ('./comunaController');
+const controllerRegion = require ('./regionController');
 
 
 module.exports = {
@@ -15,4 +16,5 @@ module.exports = {
     controllerPago,
     controllerdetalleCompra,
     controllerComuna,
+    controllerRegion
 }
