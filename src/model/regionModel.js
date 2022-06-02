@@ -4,4 +4,4 @@ const regionSchema = new Schema ({
     nombreRegion:{type:String,require: true},
 });
 
-module.exports = model('Region', regionSchema);
+module.exports = model('Regione', regionSchema);
