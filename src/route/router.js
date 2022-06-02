@@ -50,6 +50,7 @@ router.delete('/api/v0/deletePurchaseDetail/:id',controllerdetalleCompra.deleteP
 
 
 //Comuna
+router.get('/api/v0/comunas/:id',controllerComuna.getComunas);
 router.post('/api/v0/registerComuna',controllerComuna.registerComuna);
 
 //Región
