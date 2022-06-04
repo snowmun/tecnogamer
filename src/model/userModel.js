@@ -6,7 +6,7 @@ const userSchema = new Schema ({
     rol:{type:Number,require: true},
     datosPersoId: [{
         type: Schema.Types.ObjectId,
-        ref: 'datosPersonales',
+        ref: 'datosPeronale',
         autopopulate: true
     }],
 });
