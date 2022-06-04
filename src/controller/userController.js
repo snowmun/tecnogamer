@@ -1,6 +1,10 @@
 const Usuario = require("../model/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const Direccion = require('../model/direccionModel');
+const DatosP = require('../model/datosPersonalesModel');
+const Comuna = require('../model/comunaModel');
+const Region = require('../model/regionModel');
 
 
 const getUser = async( req,res) => {
@@ -52,42 +56,72 @@ const getAll = async(req,res) => {
 
 const useregister = async (req, res) => {
     try {
-        const {nombreUsuario, nombre,apellido, correo, contrasena,direccion} = req.body;
-        const  user = await Usuario.find({nombreUsuario});
-        const  userCorreo = await Usuario.find({correo});
-        if(!nombre || !nombreUsuario || !apellido || !correo || !contrasena || !direccion){
-            return res.status(409).json({
-                "status":true,
-                "message":"uno o más campos no han sido rellenados",
-                "id_Data": req.body
-            })
-        }else if (user.length !== 0) {
-            return res.status(409).json({
-                "status":true,
-                "message":"Ya existe un usuario registrado con este nombre",
-                "id_Data": nombreUsuario
-            })
-        }else if (userCorreo.length !== 0) {
-            return res.status(409).json({
-                "status":true,
-                "message":"No se pueden crear más de un usuario por correo",
-                "id_Data": correo
-            })
-        }else{
+        const {calle, numero, block, depto, piso,comunaId} = req.body; //Desestructuración de modelo dirección
+        
+        const {nombre, rut,correo,apellido,fono} = req.body; //Desestructuración de modelo datos personales
+
+        const {contrasena} = req.body; //Desestructuración de modelo usuario
+
+        if( calle !== '' 
+            && numero !== '' 
+            && nombre !== ''
+            && rut !== ''
+            && correo !== ''
+            && apellido !== ''
+            && contrasena !== '' ){
+
+            const rut2 = await DatosP.find({rut});
+    
+            if(rut2.length > 0){
+                return res.status(409).json({
+                    "status":true,
+                    "message":"El rut ya esta registrado",
+                    "id_Data": rut
+                });
+            }
+            
+            let nombreUser = `${nombre.substr(nombre,2)}${apellido}`.toLowerCase(),
+            usuario = '',
+            contador = 1;
+            
+            do {
+                usuario = await Usuario.find({nombreUsuario:nombreUser});
+
+                if(usuario.length > 0) nombreUser += contador++;
+
+            } while (usuario === '');
+
+            
             bcrypt.hash(contrasena, 10, async(error, contrasenaHasheada) => {
-                const nuevoUsuario = new Usuario({nombreUsuario, nombre,apellido, correo,direccion,contrasena: contrasenaHasheada,rol:1});
+                const nuevoDireccion = new Direccion({calle, numero, block, depto, piso, comunaId});
+                const direccionBd = await nuevoDireccion.save();
+                const nuevoDatosP = new DatosP({nombre, rut,correo, direccionId:direccionBd._id,apellido,fono});
+                const datosPBd = await nuevoDatosP.save();
+                const nuevoUsuario = new Usuario({nombreUsuario:nombreUser, contrasena:contrasenaHasheada, rol:1, datosPersoId:datosPBd._id});
                 await nuevoUsuario.save().then((usuario) => {
-                    res.status(200).json({  
+                    res.status(200).json({
                     "status":true,
                     "message":"Usuario agregado correctamente",
                     "Data": usuario});
                   }).catch((error) => {
-                    res.status(409).json({  
+                      //console.log(error)
+                    res.status(409).json({
                         "status":true,
                         "message":"El usuairo no fue agregado",
                         "Data": error});
                   });
-        })};
+            })
+        }else{
+            return res.status(409).json({
+                "status":true,
+                "message":"uno o más campos no han sido rellenados",
+                "id_Data": req.body
+            });
+        }
+
+        
+
+
         }catch (error) {
             return  res.status(409).json({  
                         "status":true,
