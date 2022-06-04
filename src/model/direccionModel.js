@@ -11,11 +11,6 @@ const direccionSchema = new Schema ({
         ref: 'Comuna',
         autopopulate: true
     }],
-    datosPersonalesId: [{
-        type: Schema.Types.ObjectId,
-        ref: 'datosPeronale',
-        autopopulate: true
-    }],
 });
 
 direccionSchema.plugin(require('mongoose-autopopulate'));
