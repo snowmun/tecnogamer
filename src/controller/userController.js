@@ -3,8 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const Direccion = require('../model/direccionModel');
 const DatosP = require('../model/datosPersonalesModel');
-const Comuna = require('../model/comunaModel');
-const Region = require('../model/regionModel');
 
 
 const getUser = async( req,res) => {
@@ -164,8 +162,14 @@ const userlogin = async( req,res) => {
 
 const deleteUser= async (req,res)=>{
     try {
-        const id = req.params.id
-        await Usuario.deleteOne({_id:id})
+        const {id} = req.params;
+        const {datosPersoId} = await Usuario.findById({_id:id});
+        const [{_id:idPerso,direccionId }]= datosPersoId;
+        const [{_id:idDire}]= direccionId;
+        await Usuario.deleteOne({_id:id});
+        await DatosP.deleteOne({_id:idPerso});
+        await Direccion.deleteOne({_id:idDire});
+        
         return  res.status(200)({
             "status":true,
             "message":"Usuario Eliminado Correctamente",
