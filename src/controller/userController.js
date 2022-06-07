@@ -144,7 +144,7 @@ const userlogin = async( req,res) => {
         bcrypt.compare(contrasena, usuario.contrasena).then((esCorrecta)=>{
             if(esCorrecta){
                 const token = jwt.sign({ id:usuario.id , correo:usuario.correo }, 'moveraenv',{
-                    expiresIn:'1m' /* 1 minuto */ 
+                    expiresIn:'20m' /* 20 minutos */ 
 
                 });
                 return res.status(200).json({
@@ -182,11 +182,12 @@ const deleteUser= async (req,res)=>{
 const UpdateUser = async (req,res) =>{
     try {
         const id = req.params.id
-        await Usuario.findByIdAndUpdate({_id:id},req.body)
+        const {nombre,rut,correo,apellido,fono} = req.body; 
+        const datosActualizado = await DatosP.findByIdAndUpdate({_id:id},nombre,rut,correo,apellido,fono)
         return res.status(200).json({
             "status":true,
             "message":"Registro Actualizado Correctamente",
-            "id_Data": id
+            "id_Data": datosActualizado
         })
     } catch (error) {
         return res.status(409).json({
