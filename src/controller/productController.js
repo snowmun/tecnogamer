@@ -48,31 +48,46 @@ const allProduct = async(req,res) => {
 
 const registerProduct = async (req, res) => {
     try {
-        const {nombreProducto} = req.body;
+        const {nombreProducto,stock,precio,descripcion} = req.body;
        
-        const  product = await Producto.find({nombreProducto});
-        
-        if(product.length > 0){
+        if(nombreProducto !== '' && stock !== '' && precio !== '' && descripcion !== ''){
+
+            const  product = await Producto.find({nombreProducto});
+            
+            if(product.length > 0){
+                return res.status(409).json({
+                    "status":true,
+                    "message":"Ya se encuentra registrado este producto",
+                    "Data": nombreProducto
+                });
+            }else{
+                const nuevaProducto = new Producto(req.body);
+                if(nuevaProducto){
+                    const infoNewProducto = await nuevaProducto.save();        
+                    return res.status(200).json({  
+                    "status":true,
+                    "message":"Producto agregada correctamente",
+                    "Data": infoNewProducto}); 
+                }else{
+                   return res.status(409).json({
+                    "status":true,
+                    "message":"No se pudo agregar correctamente",
+                    "Data": nuevaProducto});
+                }
+            };
+        }else{
             return res.status(409).json({
                 "status":true,
-                "message":"Ya se encuentra registrado este producto",
-                "Data": nombreProducto
+                "message":"uno o más campos no han sido rellenados",
+                "id_Data": {
+                    nombreProducto,
+                    stock,
+                    precio,
+                    descripcion
+                }
             });
-        }else{
-            const nuevaProducto = new Producto(req.body);
-            if(nuevaProducto){
-                const infoNewProducto = await nuevaProducto.save();        
-                return res.status(200).json({  
-                "status":true,
-                "message":"Producto agregada correctamente",
-                "Data": infoNewProducto}); 
-            }else{
-               return res.status(409).json({
-                "status":true,
-                "message":"No se pudo agregar correctamente",
-                "Data": nuevaProducto});
-            }
-        };
+        }
+
         }catch (error) {
             return  res.status(409).json({  
                 "status":true,
