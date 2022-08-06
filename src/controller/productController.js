@@ -1,9 +1,11 @@
+const ObjectId = require('mongoose').Types.ObjectId;
 const Producto = require("../model/productoModel");
+
 
 const oneProduct = async( req,res) => {
     try {
         const {id} = req.params;
-        if(id.length === 24){
+        if(ObjectId.isValid(id)){
             const product = await Producto.findById(id);
             if(!product){
                 return  res.status(409).json({  
@@ -33,7 +35,9 @@ const oneProduct = async( req,res) => {
 
 const allProduct = async(req,res) => {
     try{
+
         const allProduct = await Producto.find();
+        
         return  res.status(200).json({  
             "status":true,
             "message":"las siguientes producto fueron encontradas",
@@ -126,13 +130,31 @@ const deleteProduct= async (req,res)=>{
     try {
         const {id} = req.params;
 
-        await Producto.deleteOne({id});
-        
-        return res.status(200).json({
-            "status":true,
-            "message":"Producto Eliminada Correctamente",
-            "id_Data": id
-        });
+        if(ObjectId.isValid(id)){
+
+            const existId = await Producto.findByIdAndDelete(id);
+
+            if(existId){
+                return res.status(200).json({
+                    "status":true,
+                    "message":"Producto Eliminada Correctamente",
+                    "id_Data": id
+                });
+            }else{
+                return res.status(400).json({
+                    "status":false,
+                    "message":"No se encuentra el producto con el id",
+                    "id_Data": id
+                });
+            }
+            
+        }else{
+            return res.status(400).json({
+                "status":false,
+                "message":"El id es incorrecto",
+                "id_Data": id
+            });
+        }
     } catch (error) {
         return  res.status(409).json({  
             "status":true,
