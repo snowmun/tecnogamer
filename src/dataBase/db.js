@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose')
 
-const url = `mongodb+srv://snow:${process.env.MongoClave}@tecnogamer.x5opd.mongodb.net/tecno?retryWrites=true&w=majority`
+const url = `mongodb+srv://snow:BpLrvOk9uh8DkrkE@tecnogamer.x5opd.mongodb.net/tecno?retryWrites=true&w=majority`
 
 mongoose.connect(url)
 
