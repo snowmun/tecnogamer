@@ -3,30 +3,17 @@ const Comuna = require("../model/comunaModel");
 
 const getComunas = async( req,res) => {
     try {
-        const {id} = req.params;
-        if(id.length === 24){
-            Comuna.find({regionId:id}).then((comuna)=>{
-                if(!comuna){
-                    return   res.status(409).json({  
-                        "status":true,
-                        "message":"no se encontro ninguna comuna con la siguiente id",
-                        "Data": id}); 
-                }else{
-                    return  res.status(200).json({  
-                        "status":true,
-                        "message":"Comunas encontradas",
-                        "Data": comuna}); 
-                }
-            });
-        }else{
-            return   res.status(409).json({  
+        const comuna = await Comuna.find();
+
+        return  res.status(200).json({  
                 "status":true,
-                "message":"El id de la región es incorrecto",
-                "Data": id}); 
-        }
+                "message":"Comunas encontradas",
+                "Data": comuna
+        }); 
+            
     } catch (error) {
         return   res.status(409).json({  
-            "status":true,
+            "status":false,
             "message":"No hay resultados",
             "Data": error}); 
     }

@@ -5,29 +5,22 @@ const Producto = require("../model/productoModel");
 const oneProduct = async( req,res) => {
     try {
         const {id} = req.params;
-        if(ObjectId.isValid(id)){
-            const product = await Producto.findById(id);
-            if(!product){
-                return  res.status(409).json({  
-                    "status":true,
-                    "message":"no se encontro ningun producto con la siguiente id",
-                    "Data": id}); 
-            }else{
-                const datosProducto=product._doc
-                return  res.status(200).json({  
-                    "status":true,
-                    "message":"Producto encontrada con exito",
-                    "Data": datosProducto}); 
-            }
+       
+        const product = await Producto.findById(id);
+        if(!product){
+            return  res.status(409).json({  
+                "status":false,
+                "message":"no se encontro ningún producto con la siguiente id",
+                "Data": id}); 
         }else{
-           return  res.status(409).json({  
-            "status":true,
-            "message":"El id del producto es incorrecto",
-            "Data": id}); 
+            return  res.status(200).json({  
+                "status":true,
+                "message":"Producto encontrada con exito",
+                "Data": product}); 
         }
     } catch (error) {
         return  res.status(409).json({  
-            "status":true,
+            "status":false,
             "message":error
         }); 
     }

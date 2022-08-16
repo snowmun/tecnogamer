@@ -3,29 +3,22 @@ const Marca = require("../model/marcasModel");
 const getMark = async( req,res) => {
     try {
         const {id} = req.params;
-        if(id.length === 24){
-            const mark = await Marca.findById(id);
-            if(!mark){
-                return  res.status(409).json({  
-                    "status":true,
-                    "message":"no se encontro ninguna marca con la siguiente id",
-                    "Data": id}); 
-            }else{
-                const nombreMarca=mark._doc
-                return  res.status(200).json({  
-                    "status":true,
-                    "message":"Marca encontrada con exito",
-                    "Data": nombreMarca}); 
-            }
+        const mark = await Marca.findById(id);
+        if(!mark){
+            return  res.status(409).json({  
+                "status":false,
+                "message":"no se encontro ninguna marca con la siguiente id",
+                "Data": id}); 
         }else{
-           return  res.status(409).json({  
-            "status":true,
-            "message":"El id de la marca es incorrecto",
-            "Data": id}); 
+            return  res.status(200).json({  
+                "status":true,
+                "message":"Marca encontrada con exito",
+                "Data": mark}); 
         }
+       
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
+        return  res.status(500).json({  
+            "status":false,
             "message":error
         }); 
     }
@@ -39,7 +32,7 @@ const getAll = async(req,res) => {
             "message":"las siguientes marcas fueron encontradas",
             "Data": allMark}); 
     }catch(error){
-        return  res.status(409).json({  
+        return  res.status(500).json({  
             "status":true,
             "message":error
         }); 
@@ -53,7 +46,7 @@ const markregister = async (req, res) => {
 
         if(mark.length > 0){
             return res.status(409).json({
-                "status":true,
+                "status":false,
                 "message":"Ya se encuentra registrada está marca",
                 "Data": nombreMarca
             });
@@ -68,13 +61,13 @@ const markregister = async (req, res) => {
                 "Data": infoNewMarca}); 
             }else{
                return res.status(409).json({
-                "status":true,
+                "status":false,
                 "message":"No se pudo agregar correctamente",
                 "Data": nuevaMarca});
             }
         };
         }catch (error) {
-            return  res.status(409).json({  
+            return  res.status(500).json({  
                 "status":true,
                 "message":error
             }); 
@@ -94,14 +87,14 @@ const updateMark = async (req,res) =>{
             });
         }else{
             return res.status(409).json({
-                "status":true,
+                "status":false,
                 "message":"El campo nombre marca debe tener datos",
                 "id_Data": nombreMarca
             });
         }
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
+        return  res.status(500).json({  
+            "status":false,
             "message":error
         }); 
     }
@@ -110,15 +103,15 @@ const updateMark = async (req,res) =>{
 const deleteMark= async (req,res)=>{
     try {
         const {id} = req.params;
-        await Marca.deleteOne({id});
+        await Marca.findByIdAndDelete(id);
        return res.status(200).json({
             "status":true,
             "message":"Marca Eliminada Correctamente",
             "id_Data": id
         });
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
+        return  res.status(500).json({  
+            "status":false,
             "message":error
         }); 
     }
