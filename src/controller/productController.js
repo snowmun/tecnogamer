@@ -1,121 +1,75 @@
 const ObjectId = require('mongoose').Types.ObjectId;
-const Producto = require("../model/productoModel");
+const Product = require("../model/productoModel");
+const {sendOk,badRequest,internalError} = require('../helpers/http');
 
 
-const oneProduct = async( req,res) => {
+const getProductById = async( req,res) => {
     try {
         const {id} = req.params;
        
-        const product = await Producto.findById(id);
-        if(!product){
-            return  res.status(409).json({  
-                "status":false,
-                "message":"no se encontro ningún producto con la siguiente id",
-                "Data": id}); 
-        }else{
-            return  res.status(200).json({  
-                "status":true,
-                "message":"Producto encontrada con exito",
-                "Data": product}); 
-        }
+        const product = await Product.findById(id);
+        return (!product)
+                ? badRequest(res, 'no se encontro ningún producto con la siguiente id', id)
+                : sendOk(res,'Producto encontrada con exito', product)
+            
     } catch (error) {
-        return  res.status(409).json({  
-            "status":false,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const allProduct = async(req,res) => {
+const getAllProducts = async(req,res) => {
     try{
 
-        const allProduct = await Producto.find();
+        const allProduct = await Product.find();
         
-        return  res.status(200).json({  
-            "status":true,
-            "message":"las siguientes producto fueron encontradas",
-            "Data": allProduct}); 
+        return sendOk(res,'Productos encontrados', allProduct);
+  
     }catch(error){
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error );
     }
 };
 
-const registerProduct = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
-        const {nombreProducto,stock,precio,descripcion} = req.body;
+        const {nombreProducto} = req.body;
        
-        if(nombreProducto !== '' && stock !== '' && precio !== '' && descripcion !== ''){
-
-            const  product = await Producto.find({nombreProducto});
-            
-            if(product.length > 0){
-                return res.status(409).json({
-                    "status":true,
-                    "message":"Ya se encuentra registrado este producto",
-                    "Data": nombreProducto
-                });
-            }else{
-                const nuevaProducto = new Producto(req.body);
-                if(nuevaProducto){
-                    const infoNewProducto = await nuevaProducto.save();        
-                    return res.status(200).json({  
-                    "status":true,
-                    "message":"Producto agregada correctamente",
-                    "Data": infoNewProducto}); 
-                }else{
-                   return res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo agregar correctamente",
-                    "Data": nuevaProducto});
-                }
-            };
-        }else{
-            return res.status(409).json({
-                "status":true,
-                "message":"uno o más campos no han sido rellenados",
-                "id_Data": {
-                    nombreProducto,
-                    stock,
-                    precio,
-                    descripcion
-                }
-            });
+        if(await searchProduct(nombreProducto)){
+            return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
         }
 
+        const newProduct = await  new Product(req.body).save();
+
+        if(!newProduct){
+            return badRequest(res, 'No se pudo agregar correctamente', newProduct);
+        }
+
+        return sendOk(res,'Producto agregada correctamente', newProduct);
+        
         }catch (error) {
-            return  res.status(409).json({  
-                "status":true,
-                "message":error
-            }); 
+            return internalError(res, 'Error inesperado', error ); 
     }
 };
 
 const updateProduct = async (req,res) =>{
     try {
         const {id} = req.params;
+
         const {nombreProducto} = req.body;
-        if(nombreProducto !== ''){
-            await Producto.findByIdAndUpdate(id,req.body);
-            return res.status(200).json({
-                "status":true,
-                "message":"Registro Actualizado Correctamente",
-                "id_Data": req.body
-            });
-        }else{
-            return res.status(409).json({
-                "status":true,
-                "message":"El campo nombre producto debe tener datos",
-                "id_Data": nombreProducto
-            });
+
+         if(await searchProduct(nombreProducto)){
+            return badRequest(res, 'No se pudo actualizar el producto, ya que el nombre existe en la BD', nombreProducto);
+         }
+        
+        const updateProduct = await Product.findByIdAndUpdate(id,req.body);
+
+        if(!updateProduct){
+            return badRequest(res, 'No se pudo actualizar el producto', nombreProducto);
         }
+ 
+        return sendOk(res,'Producto Actualizado Correctamente', req.body);
+        
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error ); 
     }
 };
 
@@ -123,43 +77,36 @@ const deleteProduct= async (req,res)=>{
     try {
         const {id} = req.params;
 
-        if(ObjectId.isValid(id)){
+        const deleteProduct = await Product.findByIdAndDelete(id);
 
-            const existId = await Producto.findByIdAndDelete(id);
-
-            if(existId){
-                return res.status(200).json({
-                    "status":true,
-                    "message":"Producto Eliminada Correctamente",
-                    "id_Data": id
-                });
-            }else{
-                return res.status(400).json({
-                    "status":false,
-                    "message":"No se encuentra el producto con el id",
-                    "id_Data": id
-                });
-            }
-            
-        }else{
-            return res.status(400).json({
-                "status":false,
-                "message":"El id es incorrecto",
-                "id_Data": id
-            });
-        }
+        (!deleteProduct)
+            ? badRequest(res, 'No se pudo eliminar el producto', {})
+            : sendOk(res,'Producto Eliminado Correctamente', id)
+          
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error );  
     }
 };
 
+
+const searchProduct = async(nombreProducto) =>{
+
+    try {
+        const existProduct = await Product.findOne({nombreProducto});
+      
+        return (existProduct) ? true : false;
+
+    } catch (error) {
+
+        return true;
+    }
+ 
+}
+
 module.exports ={
-    oneProduct,
-    allProduct,
-    registerProduct,
+    getProductById,
+    getAllProducts,
+    createProduct,
     updateProduct,
     deleteProduct
 }

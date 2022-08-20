@@ -1,125 +1,122 @@
 
-const Categoria = require("../model/categoriasModel");
+const Category = require("../model/categoriasModel");
+const {sendOk, badRequest, internalError} = require('../helpers/http');
 
-const getCategory = async( req,res) => {
+const getCategoryById = async( req,res) => {
     try {
             const {id} = req.params;
 
-            const categoria = await Categoria.findById(id);
+            const category = await Category.findById(id);
 
-            if(!categoria){
-                return res.status(409).json({  
-                "status":false,
-                "message":"no se encontro ninguna categoria con la siguiente id",
-                "Data": id
-                });
-            }else{
-                return res.status(200).json({  
-                "status":true,
-                "message":"categoria encontrada",
-                "Data": categoria});
-            }
-
+            return (!category) 
+                ? badRequest(res, 'no se encontro ninguna categoria con la siguiente id', id)
+                : sendOk(res,'Categoría encontrada', category)
+                
     } catch (error) {
-        return res.status(500).json({  
-        "status":false,
-        "message":"Error inesperado",
-        "Data": error}); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const getAllCategory = async(req,res) => {
+const getAllCategorys = async(req,res) => {
     try{
-        const allCategoria = await Categoria.find();
-        return res.status(200).json({  
-        "status":true,
-        "message":"categoria encontrada",
-        "Data": allCategoria}); 
+
+        const allCategorys = await Category.find();
+
+        return sendOk(res,'Categorías encontradas', allCategorys);
+
     }catch(error){
-        return  res.status(500).json({  
-        "status":false,
-        "message":"Error inesperado",
-        "Data": error}); 
+
+        return internalError(res, 'Error inesperado', error);
+
     }
 };
 
-const categoryregister = async (req, res) => {
+const createCategory = async (req, res) => {
     try {
+
         const {nombreCategoria} = req.body;
-        const categoria = await Categoria.find({nombreCategoria});
-        if(categoria.length > 0){
-            return res.status(409).json({
-            "status":false,
-            "message":"Ya se encuentra registrada está categoría",
-            "Data": nombreCategoria});
-        }else{
-            const nuevaCategoria= new Categoria({nombreCategoria});
-            if(nuevaCategoria){
-                const infoNewCategoria= await nuevaCategoria.save();
-                return res.status(200).json({  
-                "status":true,
-                "message":"Categoría agregada correctamente",
-                "Data": infoNewCategoria}); 
-            }else{
-                return res.status(409).json({
-                "status":false,
-                "message":"La categoría no se pudo agregar correctamente",
-                "Data": nuevaCategoria});
-            }
-        };
+
+
+        if(await searchCategory(nombreCategoria)){
+             return badRequest(res, 'La categoría, ya se encuentra registrada', nombreCategoria);
+        }
+        
+        const newCategory = await new Category({nombreCategoria}).save();
+
+        if(!newCategory){
+           return badRequest(res, 'La categoría no se pudo agregar correctamente', newCategory);
+        }
+
+        
+        return sendOk(res,'Categoría agregada correctamentes', newCategory); 
+        
+       
         }catch (error) {
-            return  res.status(500).json({  
-            "status":false,
-            "message":"Error inesperado",
-            "Data": error}); 
-    }
+            return  internalError(res, 'Error inesperado', error); 
+        }
 };
 
 
 const updateCategory = async (req,res) =>{
     try {
         const {id} = req.params;
+
         const {nombreCategoria} = req.body;
-        if(nombreCategoria !== ''){
-            await Categoria.findByIdAndUpdate(id,req.body);
-            return res.status(200).json({
-            "status":false,
-            "message":"Registro Actualizado Correctamente",
-            "id_Data": req.body});
-        }else{
-            return res.status(409).json({
-            "status":true,
-            "message":"El campo nombre categoria debe tener datos",
-            "id_Data": nombreCategoria});
+        
+        if(nombreCategoria.length <= 0){
+            return badRequest(res, 'El campo nombre categoria debe tener datos', nombreCategoria);
         }
+
+        if(await searchCategory(nombreCategoria)){
+             return badRequest(res, 'No se pudo actualizar la categoría, ya que el nombre existe en la BD', nombreCategoria);
+        }
+
+        const updateCategory = await Category.findByIdAndUpdate(id,req.body);
+
+        if(!updateCategory){
+            return badRequest(res, 'No se pudo actualizar la categoría', nombreCategoria);
+        }
+
+        return sendOk(res,'Categoría Actualizada Correctamente', req.body); 
+          
     } catch (error) {
-        return res.status(500).json({  
-        "status":false,
-        "message":"Error inesperado",
-        "Data": error}); 
+        return internalError(res, 'Error inesperado', error); 
     }
 };
 
 const deleteCategory= async (req,res)=>{
     try {
         const {id} = req.params;
-        await Categoria.findByIdAndDelete(id);
-        return res.status(200).json({
-        "status":true,
-        "message":"Categoria Eliminada Correctamente",
-        "id_Data": id});
+
+        const deleteCategory = await Category.findByIdAndDelete(id);
+
+        return (!deleteCategory)
+            ? badRequest(res, 'No se pudo eliminar la categoría', {})
+            : sendOk(res,'Categoria Eliminada Correctamente', id); 
+     
     } catch (error) {
-        return res.status(500).json({  
-        "status":false,
-        "message":"Error inesperado",
-        "Data": error}); 
+        return internalError(res, 'Error inesperado', error); 
     }
 };
 
+
+const searchCategory = async(nombreCategoria) =>{
+    try {
+        const existCategory = await Category.findOne({nombreCategoria});
+
+        return (existCategory) ? true : false;
+
+    } catch (error) {
+
+        return true;
+    }
+ 
+}
+
 module.exports ={
-    getCategory,
-    getAllCategory,
-    categoryregister,
+    getCategoryById,
+    getAllCategorys,
+    createCategory,
     updateCategory,
     deleteCategory
 }

@@ -1,126 +1,119 @@
-const Marca = require("../model/marcasModel");
+const Mark = require("../model/marcasModel");
 
-const getMark = async( req,res) => {
+const {badRequest,sendOk,internalError} = require('../helpers/http');
+
+const getMarkById = async( req,res) => {
     try {
+
         const {id} = req.params;
-        const mark = await Marca.findById(id);
-        if(!mark){
-            return  res.status(409).json({  
-                "status":false,
-                "message":"no se encontro ninguna marca con la siguiente id",
-                "Data": id}); 
-        }else{
-            return  res.status(200).json({  
-                "status":true,
-                "message":"Marca encontrada con exito",
-                "Data": mark}); 
-        }
-       
+
+        const mark = await Mark.findById(id);
+
+        return (!mark)
+            ? badRequest(res, 'no se encontro ninguna marca con la siguiente id', id)
+            : sendOk(res,'Marca encontrada con exito', mark)
+          
     } catch (error) {
-        return  res.status(500).json({  
-            "status":false,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const getAll = async(req,res) => {
+const getAllMarks = async(req,res) => {
     try{
-        const allMark = await Marca.find();
-        return  res.status(200).json({  
-            "status":true,
-            "message":"las siguientes marcas fueron encontradas",
-            "Data": allMark}); 
+        const allMark = await Mark.find();
+
+        return sendOk(res,'las siguientes marcas fueron encontradas', allMark);
+          
     }catch(error){
-        return  res.status(500).json({  
-            "status":true,
-            "message":error
-        }); 
+        return  internalError(res, 'Error inesperado', error); 
     }
 };
 
-const markregister = async (req, res) => {
+const createMark = async (req, res) => {
     try {
+
         const {nombreMarca} = req.body;
-        const  mark = await Marca.find({nombreMarca});
 
-        if(mark.length > 0){
-            return res.status(409).json({
-                "status":false,
-                "message":"Ya se encuentra registrada está marca",
-                "Data": nombreMarca
-            });
-        }else{
-            const nuevaMarca = new Marca({nombreMarca});
+        const  mark = await Mark.find({nombreMarca});
 
-            if(nuevaMarca){
-                const infoNewMarca = await nuevaMarca.save();
-                return res.status(200).json({  
-                "status":true,
-                "message":"Marca agregada correctamente",
-                "Data": infoNewMarca}); 
-            }else{
-               return res.status(409).json({
-                "status":false,
-                "message":"No se pudo agregar correctamente",
-                "Data": nuevaMarca});
-            }
-        };
+        
+        if(await searchMark(nombreMarca)){
+            return badRequest(res, 'Ya se encuentra registrada está marca', mark);
+        }
+
+        const newMark = await new Mark({nombreMarca}).save();
+
+        if(!newMark){
+            return badRequest(res, 'No se pudo agregar correctamente', newMark); 
+        }
+
+        return sendOk(res, 'Marca agregada correctamente', newMark);
+        
+        
         }catch (error) {
-            return  res.status(500).json({  
-                "status":true,
-                "message":error
-            }); 
-    }
+            return  internalError(res, 'Error inesperado', error);  
+        }
 };
 
 const updateMark = async (req,res) =>{
     try {
         const {id} = req.params;
         const {nombreMarca} = req.body;
-        if(nombreMarca !== ''){
-            await Marca.findByIdAndUpdate(id,req.body);
-            return res.status(200).json({
-                "status":true,
-                "message":"Registro Actualizado Correctamente",
-                "id_Data": req.body
-            });
-        }else{
-            return res.status(409).json({
-                "status":false,
-                "message":"El campo nombre marca debe tener datos",
-                "id_Data": nombreMarca
-            });
+
+        if(nombreMarca.length <= 0){
+            return badRequest(res, 'El campo nombre marca debe tener datos', nombreMarca);
         }
+
+        if(await searchMark(nombreMarca)){
+             return badRequest(res, 'No se pudo actualizar la marca, ya que el nombre existe en la BD', nombreMarca);
+        }
+
+        const updateMark = await Mark.findByIdAndUpdate(id,req.body);
+        
+        if(!updateMark){
+            return badRequest(res, 'No se pudo actualizar la marca', nombreMarca);
+        }
+
+        return sendOk(res,'Marca Actualizada Correctamente', req.body); 
+        
     } catch (error) {
-        return  res.status(500).json({  
-            "status":false,
-            "message":error
-        }); 
+       return  internalError(res, 'Error inesperado', error);  
     }
 };
 
 const deleteMark= async (req,res)=>{
     try {
         const {id} = req.params;
-        await Marca.findByIdAndDelete(id);
-       return res.status(200).json({
-            "status":true,
-            "message":"Marca Eliminada Correctamente",
-            "id_Data": id
-        });
+        const deleteMark = await Mark.findByIdAndDelete(id);
+
+        return (!deleteMark)
+            ? badRequest(res, 'No se pudo eliminar la marca', {})
+            : sendOk(res,'Marca Eliminada Correctamente', id)
+            
     } catch (error) {
-        return  res.status(500).json({  
-            "status":false,
-            "message":error
-        }); 
+        return  internalError(res, 'Error inesperado', error); 
     }
 };
 
+
+const searchMark = async(nombreMarca) =>{
+
+    try {
+        const existMark = await Mark.findOne({nombreMarca});
+
+        return (existMark) ? true : false;
+
+    } catch (error) {
+
+        return true;
+    }
+ 
+}
+
 module.exports ={
-    markregister,
-    getAll,
-    getMark,
+    createMark,
+    getAllMarks,
+    getMarkById,
     updateMark,
     deleteMark
 }
