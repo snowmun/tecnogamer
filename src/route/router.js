@@ -5,6 +5,7 @@ const {controllerUser,controllerMark,controllerCategory,controllerProduct,
 const { validaForm } = require('../middleware/validaForm');
 const { validIdMongo } = require('../middleware/validaParamsId');
 
+
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
 router.get('/api/v0/alluser',controllerUser.getAll);
@@ -58,4 +59,5 @@ router.post('/api/v0/registerComuna',controllerComuna.registerComuna);
 //Región
 router.get('/api/v0/allRegion',controllerRegion.getAll);
 router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
+
 module.exports = router;

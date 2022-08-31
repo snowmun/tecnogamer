@@ -32,8 +32,10 @@ const getAllProducts = async(req,res) => {
 const createProduct = async (req, res) => {
     try {
         const {nombreProducto} = req.body;
-       
-        if(await searchProduct(nombreProducto)){
+
+       const countProduct = await searchProduct(nombreProducto.trim());
+  
+        if( countProduct > 0 || countProduct === -1){
             return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
         }
 
@@ -56,10 +58,6 @@ const updateProduct = async (req,res) =>{
 
         const {nombreProducto} = req.body;
 
-         if(await searchProduct(nombreProducto)){
-            return badRequest(res, 'No se pudo actualizar el producto, ya que el nombre existe en la BD', nombreProducto);
-         }
-        
         const updateProduct = await Product.findByIdAndUpdate(id,req.body);
 
         if(!updateProduct){
@@ -92,13 +90,12 @@ const deleteProduct= async (req,res)=>{
 const searchProduct = async(nombreProducto) =>{
 
     try {
-        const existProduct = await Product.findOne({nombreProducto});
-      
-        return (existProduct) ? true : false;
+
+        return  (await Product.find({nombreProducto})).length;
 
     } catch (error) {
 
-        return true;
+        return -1;
     }
  
 }
