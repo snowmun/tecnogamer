@@ -71,9 +71,9 @@ const updateCategory = async (req,res) =>{
              return badRequest(res, 'No se pudo actualizar la categoría, ya que el nombre existe en la BD', nombreCategoria);
         }
 
-        const updateCategory = await Category.findByIdAndUpdate(id,req.body);
+        const canUpdateCategory = await Category.findByIdAndUpdate(id,req.body);
 
-        if(!updateCategory){
+        if(!canUpdateCategory){
             return badRequest(res, 'No se pudo actualizar la categoría', nombreCategoria);
         }
 
@@ -88,9 +88,9 @@ const deleteCategory= async (req,res)=>{
     try {
         const {id} = req.params;
 
-        const deleteCategory = await Category.findByIdAndDelete(id);
+        const canDeleteCategory = await Category.findByIdAndDelete(id);
 
-        return (!deleteCategory)
+        return (!canDeleteCategory)
             ? badRequest(res, 'No se pudo eliminar la categoría', {})
             : sendOk(res,'Categoria Eliminada Correctamente', id); 
      

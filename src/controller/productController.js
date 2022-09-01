@@ -58,9 +58,9 @@ const updateProduct = async (req,res) =>{
 
         const {nombreProducto} = req.body;
 
-        const updateProduct = await Product.findByIdAndUpdate(id,req.body);
+        const canUpdateProduct = await Product.findByIdAndUpdate(id,req.body);
 
-        if(!updateProduct){
+        if(!canUpdateProduct){
             return badRequest(res, 'No se pudo actualizar el producto', nombreProducto);
         }
  
@@ -75,9 +75,9 @@ const deleteProduct= async (req,res)=>{
     try {
         const {id} = req.params;
 
-        const deleteProduct = await Product.findByIdAndDelete(id);
+        const canDeleteProduct = await Product.findByIdAndDelete(id);
 
-        (!deleteProduct)
+        (!canDeleteProduct)
             ? badRequest(res, 'No se pudo eliminar el producto', {})
             : sendOk(res,'Producto Eliminado Correctamente', id)
           

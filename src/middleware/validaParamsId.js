@@ -8,9 +8,9 @@ const validIdMongo = (req,res,next) =>{
 
     if(!ObjectId.isValid(id)){
         return res.status(400).json({  
-            "status":false,
-            "message":"El parametro es incorrecto",
-            "Data": id
+            status:false,
+            message:"El parametro es incorrecto",
+            Data: id
         });
     }
     next();

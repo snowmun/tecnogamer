@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const createToken = (req,res) => {
   try {
-        //let tokenList = {};
         const postData = req.body;
         const accessApi = {key:postData.apiKey,origen:'dev'};
         if (accessApi) {
@@ -12,14 +11,10 @@ const createToken = (req,res) => {
             
             return http.sendOk(res, 'Acceso permitido',{ "token": token, "origen": accessApi.origen});
         } else {
-            let error = {
-                "code": 403,
-                "message": "Acceso denegado."
-            }
-            return http.badRequest(res, "ERROR", error);
+         
+            return http.badRequest(res, 'Acceso denegado',[], 403);
         }
     } catch (error) {
-        console.log(error)
         return http.internalError(res, "Error interno", error);
     }
 }

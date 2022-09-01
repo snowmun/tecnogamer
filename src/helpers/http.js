@@ -1,26 +1,26 @@
 
-const sendOk = (res,message,result) =>{
-    res.status(200).json({  
-        "status":true,
+const sendOk = (res, message, result, code = 200) => {
+    res.status(code).json({  
+        status:true,
         message,
-        "Data": result,
+        Data: result,
     });
 }
 
 
-const badRequest = (res, message, result) =>{
-    res.status(409).json({  
-        "status":false,
+const badRequest = (res, message, result, code = 400) => {
+    res.status(code).json({  
+        status:false,
         message,
-        "Data": result
+        Data: result
     });
 }
 
-const internalError = (res, message, result) => {
-    res.status(500).json({  
-        "status":false,
+const internalError = (res, message, result, code = 500) => {
+    res.status(code).json({  
+        status:false,
         message,
-        "Data": result
+        Data: result
     }); 
 }
 

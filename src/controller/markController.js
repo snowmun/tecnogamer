@@ -68,9 +68,9 @@ const updateMark = async (req,res) =>{
              return badRequest(res, 'No se pudo actualizar la marca, ya que el nombre existe en la BD', nombreMarca);
         }
 
-        const updateMark = await Mark.findByIdAndUpdate(id,req.body);
+        const canUpdateMark = await Mark.findByIdAndUpdate(id,req.body);
         
-        if(!updateMark){
+        if(!canUpdateMark){
             return badRequest(res, 'No se pudo actualizar la marca', nombreMarca);
         }
 
@@ -84,9 +84,9 @@ const updateMark = async (req,res) =>{
 const deleteMark= async (req,res)=>{
     try {
         const {id} = req.params;
-        const deleteMark = await Mark.findByIdAndDelete(id);
+        const canDeleteMark = await Mark.findByIdAndDelete(id);
 
-        return (!deleteMark)
+        return (!canDeleteMark)
             ? badRequest(res, 'No se pudo eliminar la marca', {})
             : sendOk(res,'Marca Eliminada Correctamente', id)
             
