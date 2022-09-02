@@ -15,26 +15,26 @@ router.delete('/api/v0/deleteuser/:id',controllerUser.deleteUser);
 router.put('/api/v0/updateuser/:id',controllerUser.UpdateUser);
 
 //Rutas Marca
-router.get('/api/v0/allmark',controllerMark.getAllMarks);
+router.get('/api/v0/allmarks',controllerMark.getAllMarks);
 router.get('/api/v0/onemark/:id',validIdMongo, controllerMark.getMarkById);
-router.post('/api/v0/markregister',[validarTokenRequest],controllerMark.createMark);
-router.put('/api/v0/updatemark/:id',[validarTokenRequest,validIdMongo],controllerMark.updateMark);
-router.delete('/api/v0/deletemark/:id',[validarTokenRequest,validIdMongo],controllerMark.deleteMark);
+router.post('/api/v0/create-mark',[validarTokenRequest],controllerMark.createMark);
+router.put('/api/v0/update-mark/:id',[validarTokenRequest,validIdMongo],controllerMark.updateMark);
+router.delete('/api/v0/delete-mark/:id',[validarTokenRequest,validIdMongo],controllerMark.deleteMark);
 
 
 //Rutas Categoria
-router.get('/api/v0/allcategory',controllerCategory.getAllCategorys);
+router.get('/api/v0/allcategories',controllerCategory.getAllCategorys);
 router.get('/api/v0/onecategory/:id', validIdMongo, controllerCategory.getCategoryById);
-router.post('/api/v0/categoryregister',[validarTokenRequest],controllerCategory.createCategory);
-router.put('/api/v0/updatecateogry/:id',[validarTokenRequest,validIdMongo],controllerCategory.updateCategory);
-router.delete('/api/v0/deletecategory/:id',[validarTokenRequest,validIdMongo],controllerCategory.deleteCategory);
+router.post('/api/v0/create-category',[validarTokenRequest],controllerCategory.createCategory);
+router.put('/api/v0/update-cateogry/:id',[validarTokenRequest,validIdMongo],controllerCategory.updateCategory);
+router.delete('/api/v0/delete-category/:id',[validarTokenRequest,validIdMongo],controllerCategory.deleteCategory);
 
 // producto
-router.get('/api/v0/allproduct',controllerProduct.getAllProducts);
-router.get('/api/v0/oneproduct/:id', validIdMongo,controllerProduct.getProductById);
-router.post('/api/v0/registerproduct',[validarTokenRequest,validaForm],controllerProduct.createProduct);
-router.put('/api/v0/updateproduct/:id',[validarTokenRequest,validIdMongo, validaForm],controllerProduct.updateProduct);
-router.delete('/api/v0/deleteproduct/:id',[validarTokenRequest,validIdMongo],controllerProduct.deleteProduct);
+router.get('/api/v0/allproducts',controllerProduct.getAllProducts);
+router.get('/api/v0/one-product/:id', validIdMongo,controllerProduct.getProductById);
+router.post('/api/v0/create-product',[validarTokenRequest,validaForm],controllerProduct.createProduct);
+router.put('/api/v0/update-product/:id',[validarTokenRequest,validIdMongo, validaForm],controllerProduct.updateProduct);
+router.delete('/api/v0/delete-product/:id',[validarTokenRequest,validIdMongo],controllerProduct.deleteProduct);
 
 //pago
 router.get('/api/v0/allPayment',controllerPago.onePayment);
