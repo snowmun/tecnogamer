@@ -11,11 +11,13 @@ const getCategoryById = async( req,res) => {
             return (!category) 
                 ? badRequest(res, 'no se encontro ninguna categoria con la siguiente id', id)
                 : sendOk(res,'Categoría encontrada', category)
-                
+        
     } catch (error) {
         return internalError(res, 'Error inesperado', error);
     }
 };
+
+
 
 const getAllCategorys = async(req,res) => {
     try{

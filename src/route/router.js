@@ -6,6 +6,8 @@ const { validaForm } = require('../middleware/validaForm');
 const { validIdMongo } = require('../middleware/validaParamsId');
 const {validarTokenRequest} = require('../auth/validaToken');
 const {createToken} = require('../auth/getToken');
+const upload = require('../config/multer/multer');
+
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
 router.get('/api/v0/alluser',controllerUser.getAll);
@@ -21,7 +23,6 @@ router.post('/api/v0/create-mark',[validarTokenRequest],controllerMark.createMar
 router.put('/api/v0/update-mark/:id',[validarTokenRequest,validIdMongo],controllerMark.updateMark);
 router.delete('/api/v0/delete-mark/:id',[validarTokenRequest,validIdMongo],controllerMark.deleteMark);
 
-
 //Rutas Categoria
 router.get('/api/v0/allcategories',controllerCategory.getAllCategorys);
 router.get('/api/v0/onecategory/:id', validIdMongo, controllerCategory.getCategoryById);
@@ -32,8 +33,8 @@ router.delete('/api/v0/delete-category/:id',[validarTokenRequest,validIdMongo],c
 // producto
 router.get('/api/v0/allproducts',controllerProduct.getAllProducts);
 router.get('/api/v0/one-product/:id', validIdMongo,controllerProduct.getProductById);
-router.post('/api/v0/create-product',[validarTokenRequest,validaForm],controllerProduct.createProduct);
-router.put('/api/v0/update-product/:id',[validarTokenRequest,validIdMongo, validaForm],controllerProduct.updateProduct);
+router.post('/api/v0/create-product',[validarTokenRequest,upload.single('img' || '')],controllerProduct.createProduct);
+router.put('/api/v0/update-product/:id',[validarTokenRequest,validIdMongo,upload.single('img' || '')],controllerProduct.updateProduct);
 router.delete('/api/v0/delete-product/:id',[validarTokenRequest,validIdMongo],controllerProduct.deleteProduct);
 
 //pago
@@ -62,4 +63,5 @@ router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
 
 //Token
 router.post('/api/v0/getToken', createToken);
+
 module.exports = router;

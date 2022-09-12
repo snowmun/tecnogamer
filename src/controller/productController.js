@@ -1,4 +1,3 @@
-const ObjectId = require('mongoose').Types.ObjectId;
 const Product = require("../model/productoModel");
 const {sendOk,badRequest,internalError} = require('../helpers/http');
 
@@ -33,21 +32,30 @@ const createProduct = async (req, res) => {
     try {
         const {nombreProducto} = req.body;
 
-       const countProduct = await searchProduct(nombreProducto.trim());
-  
+        let filename = '';
+        
+        if(req.file){
+            filename = req.file.filename;
+        }
+    
+        const countProduct = await searchProduct(nombreProducto.trim());
+        
         if( countProduct > 0 || countProduct === -1){
             return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
         }
 
-        const newProduct = await  new Product(req.body).save();
+        delete req.body.img;
+
+        const newProduct = await  new Product({...req.body,img:filename}).save();
 
         if(!newProduct){
             return badRequest(res, 'No se pudo agregar correctamente', newProduct);
         }
 
-        return sendOk(res,'Producto agregada correctamente', newProduct);
+        return sendOk(res,'Producto agregado correctamente', newProduct);
         
         }catch (error) {
+            console.log(error)
             return internalError(res, 'Error inesperado', error ); 
     }
 };
@@ -58,8 +66,17 @@ const updateProduct = async (req,res) =>{
 
         const {nombreProducto} = req.body;
 
-        const canUpdateProduct = await Product.findByIdAndUpdate(id,req.body);
+        let filename = '';
+        
+        if(req.file){
+            filename = req.file.filename;
+        }
+        
+        delete req.body.img;
 
+        const canUpdateProduct = await Product.findByIdAndUpdate(id,{...req.body,img:filename});
+
+        
         if(!canUpdateProduct){
             return badRequest(res, 'No se pudo actualizar el producto', nombreProducto);
         }
