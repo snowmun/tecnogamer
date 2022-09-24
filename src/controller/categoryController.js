@@ -35,34 +35,28 @@ const getAllCategorys = async(req,res) => {
 
 const createCategory = async (req, res) => {
     try {
-
         const {nombreCategoria} = req.body;
-
-
+        
         if(await searchCategory(nombreCategoria)){
              return badRequest(res, 'La categoría, ya se encuentra registrada', nombreCategoria);
         }
-        
         const newCategory = await new Category({nombreCategoria}).save();
-
+        
         if(!newCategory){
            return badRequest(res, 'La categoría no se pudo agregar correctamente', newCategory);
         }
 
-        
         return sendOk(res,'Categoría agregada correctamentes', newCategory); 
-        
-       
-        }catch (error) {
-            return  internalError(res, 'Error inesperado', error); 
-        }
+
+    }catch (error) {
+        return  internalError(res, 'Error inesperado', error); 
+    }
 };
 
 
 const updateCategory = async (req,res) =>{
     try {
         const {id} = req.params;
-
         const {nombreCategoria} = req.body;
         
         if(nombreCategoria.length <= 0){
@@ -78,7 +72,6 @@ const updateCategory = async (req,res) =>{
         if(!canUpdateCategory){
             return badRequest(res, 'No se pudo actualizar la categoría', nombreCategoria);
         }
-
         return sendOk(res,'Categoría Actualizada Correctamente', req.body); 
           
     } catch (error) {
@@ -89,7 +82,6 @@ const updateCategory = async (req,res) =>{
 const deleteCategory= async (req,res)=>{
     try {
         const {id} = req.params;
-
         const canDeleteCategory = await Category.findByIdAndDelete(id);
 
         return (!canDeleteCategory)
@@ -105,11 +97,9 @@ const deleteCategory= async (req,res)=>{
 const searchCategory = async(nombreCategoria) =>{
     try {
         const existCategory = await Category.findOne({nombreCategoria});
-
         return (existCategory) ? true : false;
 
     } catch (error) {
-
         return true;
     }
  
