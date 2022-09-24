@@ -1,14 +1,14 @@
 const { badRequest } = require("../helpers/http");
 
-const inputs = ['nombreProducto','stock','precio','descripcion'];
+const inputs = ['nombre', 'rut', 'correo', 'apellido', 'contrasena'];
 
-const validaForm = (req,res,next) => {
+const validaForm = (req, res, next) => {
     for (const input of inputs) {
-         if(req.body[input].length <= 0){
+        if (req.body[input].length <= 0) {
             return badRequest(res, `${input} no debe estar vacío`, input);
         }
     }
     next();
-    }
+}
 
-module.exports = {validaForm};
+module.exports = { validaForm };

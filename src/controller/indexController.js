@@ -6,6 +6,7 @@ const controllerPago = require ('./paymentController');
 const controllerdetalleCompra = require ('./purchaseDetailController');
 const controllerComuna = require ('./comunaController');
 const controllerRegion = require ('./regionController');
+const controllerUpload = require ('./uploadController');
 
 
 module.exports = {
@@ -16,5 +17,6 @@ module.exports = {
     controllerPago,
     controllerdetalleCompra,
     controllerComuna,
-    controllerRegion
+    controllerRegion,
+    controllerUpload
 }
