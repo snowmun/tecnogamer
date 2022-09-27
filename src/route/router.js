@@ -7,6 +7,8 @@ const { validIdMongo } = require('../middleware/validaParamsId');
 const { validarToken } = require('../auth/validaToken');
 const { createToken } = require('../auth/getToken');
 const upload = require('../config/multer/multer');
+const { send } = require('../config/mailer');
+const { validaExtension } = require('../middleware/validaExtension');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
@@ -65,6 +67,9 @@ router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
 router.post('/api/v0/getToken', createToken);
 
 //Upload
-router.post('/api/v0/upload', upload.single('img' || ''), controllerUpload.upload);
+router.post('/api/v0/upload', validaExtension, controllerUpload.upload);
+
+//Correo
+router.post('/api/v0/send-email', send);
 
 module.exports = router;

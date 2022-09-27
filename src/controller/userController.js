@@ -106,7 +106,7 @@ const userlogin = async (req, res) => {
       return badRequest(res, "No existe este usuario", nombreUsuario);
     }
 
-    const { contrasena: bdPas } = existUser[0];
+    const { contrasena: bdPas, rol, nombreUsuario: nombreUser, datosPersoId } = existUser[0];
 
     const match = await bcrypt.compare(contrasena, bdPas);
 
@@ -114,7 +114,10 @@ const userlogin = async (req, res) => {
       return badRequest(res, "Contraseña incorrecta", contrasena);
     }
 
-    return sendOk(res, "Usuario logeado correctamente", existUser[0]);
+    const { _id, nombre, apellido, correo } = datosPersoId.pop();
+
+    return sendOk(res, "Usuario logeado correctamente", { rol, nombreUser, _id, nombre, apellido, correo });
+
   } catch (error) {
     return internalError(res, "Error inesperado", error);
   }

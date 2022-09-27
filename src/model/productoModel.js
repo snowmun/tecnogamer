@@ -1,11 +1,12 @@
-const {model , Schema} = require("mongoose");
+const { model, Schema } = require("mongoose");
 
-const productoSchema = new Schema ({
-    nombreProducto:{type:String,require: true},
-    stock:{type:String,require: true},
-    precio:{type:String,require: true},
-    descripcion:{type:String,require: true},
-    img:{type:String,require: true},
+const productoSchema = new Schema({
+    nombreProducto: { type: String, require: true },
+    stock: { type: String, require: true },
+    precio: { type: String, require: true },
+    descripcion: { type: String, require: true },
+    img: { type: Buffer, require: true },
+    extension: { type: String, require: false },
     categoriaId: [{
         type: Schema.Types.ObjectId,
         ref: 'Categoria',

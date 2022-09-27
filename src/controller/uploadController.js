@@ -1,15 +1,17 @@
-const {sendOk,internalError} = require('../helpers/http');
+const { sendOk, internalError } = require('../helpers/http');
 
-const upload = (req, res) =>{
+const upload = (req, res) => {
     try {
-        if(req.file){
-            return  sendOk(res,'Imagen cargada',req.file.filename);
-        }
+        const { img64 } = req.body;
 
-        return sendOk(res,'No hay imagen para cargar','');
+        const bas64 = img64.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+
+        const extension = img64.split(';')[0].split('/')[1];
+
+        sendOk(res, 'Archivo procesada correcctamente', { bas64, extension });
 
     } catch (error) {
-        return internalError(res,'Error interno',error);
+        return internalError(res, 'Error interno', error);
     }
 }
 
