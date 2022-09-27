@@ -8,14 +8,30 @@ const getProductById = async (req, res) => {
     const { id } = req.params;
 
     const product = await Product.findById(id);
-    return !product
-      ? badRequest(
-          res,
-          "no se encontro ningún producto con la siguiente id",
-          id
-        )
-      : sendOk(res, "Producto encontrada con exito", product);
+
+    const img64 = Buffer.from(product.img).toString('base64');
+
+
+
+    if (!product) {
+      return badRequest(res, "no se encontro ningún producto con la siguiente id", id)
+    }
+
+    const body = {
+      _id: product._id,
+      nombreProducto: product.nombreProducto,
+      stock: product.stock,
+      precio: product.precio,
+      descripcion: product.descripcion,
+      extension: product.extension,
+      categoriaId: product.categoriaId,
+      marcaId: product.marcaId
+    }
+
+    sendOk(res, "Producto encontrada con exito", { body, img64 });
+
   } catch (error) {
+    console.log(error)
     return internalError(res, "Error inesperado", error);
   }
 };
@@ -24,7 +40,26 @@ const getAllProducts = async (req, res) => {
   try {
     const allProduct = await Product.find();
 
-    return sendOk(res, "Productos encontrados", allProduct);
+    const newData = allProduct.map(product => {
+
+      const img64 = Buffer.from(product.img).toString('base64');
+
+      const body = {
+        _id: product._id,
+        nombreProducto: product.nombreProducto,
+        stock: product.stock,
+        precio: product.precio,
+        descripcion: product.descripcion,
+        extension: product.extension,
+        categoriaId: product.categoriaId,
+        marcaId: product.marcaId,
+        img64
+      }
+
+      return body;
+
+    })
+    return sendOk(res, "Productos encontrados", newData);
   } catch (error) {
     return internalError(res, "Error inesperado", error);
   }
@@ -32,13 +67,15 @@ const getAllProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { nombreProducto } = req.body;
-
+    const { nombreProducto, img } = req.body;
     // const countProduct = await searchProduct(nombreProducto.trim());
 
     // if( countProduct > 0 || countProduct === -1){
     //     return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
     // }
+    const bindata = Buffer.from(img, "base64");
+
+    req.body.img = bindata;
 
     const newProduct = await new Product(req.body).save();
 
@@ -99,11 +136,9 @@ const deleteProduct = async (req, res) => {
       badRequest(res, "No se pudo eliminar el producto", {});
     }
 
-    fs.unlinkSync(path.join(__dirname, `../public/${canDeleteProduct.img}`));
-
     sendOk(res, "Producto Eliminado Correctamente", id);
   } catch (error) {
-    console.log(error);
+
     return internalError(res, "Error inesperado", error);
   }
 };
