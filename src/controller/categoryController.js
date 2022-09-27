@@ -109,7 +109,6 @@ const searchCategory = async (nombreCategoria) => {
         return (existCategory) ? true : false;
 
     } catch (error) {
-
         return true;
     }
 
