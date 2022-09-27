@@ -1,15 +1,15 @@
-const {sendOk,internalError} = require('../helpers/http');
+const { sendOk, internalError } = require('../helpers/http');
 
-const upload = (req, res) =>{
+const upload = (req, res) => {
     try {
-        if(req.file){
-            return  sendOk(res,'Imagen cargada',req.file.filename);
+        if (req.file) {
+            return sendOk(res, 'Imagen cargada', req.file.filename);
         }
 
-        return sendOk(res,'No hay imagen para cargar','');
+        return sendOk(res, 'No hay imagen para cargar', '');
 
     } catch (error) {
-        return internalError(res,'Error interno',error);
+        return internalError(res, 'Error interno', error);
     }
 }
 
