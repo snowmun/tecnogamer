@@ -38,7 +38,7 @@ router.put('/api/v0/update-product/:id', [validarToken, validIdMongo, upload.sin
 router.delete('/api/v0/delete-product/:id', [validarToken, validIdMongo], controllerProduct.deleteProduct);
 
 //pago
-router.get('/api/v0/allPayment', controllerPago.onePayment);
+router.get('/api/v0/allPayment', validIdMongo,controllerPago.onePayment);
 router.get('/api/v0/onePayment/:id', validIdMongo, controllerPago.allPayment);
 router.post('/api/v0/registerPayment', controllerPago.registerPayment);
 router.put('/api/v0/updatePayment/:id', controllerPago.updatePayment);

@@ -1,130 +1,126 @@
 const pagos = require("../model/pagosModel");
+const Product = require("../model/productoModel");
 
 const onePayment = async( req,res) => {
+
     try {
+
         const {id} = req.params;
-        if(id.length === 24){
-            const pago = await pagos.findById(id);
-            if(!pago){
-                return  res.status(409).json({  
-                    "status":true,
-                    "message":"no se encontro ningun pago con la siguiente id",
-                    "Data": id}); 
-            }else{
-                const datosPago=pago._doc
-                return  res.status(200).json({  
-                    "status":true,
-                    "message":"pago encontrada con exito",
-                    "Data": datosPago}); 
-            }
-        }else{
-           return  res.status(409).json({  
-            "status":true,
-            "message":"El id del producto es incorrecto",
-            "Data": id}); 
-        }
+        const pago = await pagos.findById(id);
+
+        return  (!pago)
+                        ? badRequest(res, 'no se encontro ningun pago con la siguiente id', id)
+                        : sendOk(res,'pago encontrada con exito', pago)
+          
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
 const allPayment  = async(req,res) => {
+
     try{
+
         const allPagos = await pagos.find();
-        return  res.status(200).json({  
-            "status":true,
-            "message":"las siguientes producto fueron encontradas",
-            "Data": allPagos}); 
+
+        return sendOk(res,'las siguientes producto fueron encontradas', allPagos);
+
     }catch(error){
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+
+        return internalError(res, 'Error inesperado', error);
+
     }
 };
 
 const registerPayment  = async (req, res) => {
     try {
+
         const {nombreProducto} = req.body;
-       
-        const  product = await Producto.find({nombreProducto});
+
+        if(await searchProduct(nombreProducto)){
+            
+            return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
         
-        if(product.length > 0){
-            return res.status(409).json({
-                "status":true,
-                "message":"Ya se encuentra registrado este producto",
-                "Data": nombreProducto
-            });
-        }else{
-            const nuevaProducto = new Producto(req.body);
-            if(nuevaProducto){
-                const infoNewProducto = await nuevaProducto.save();
-                return res.status(200).json({  
-                "status":true,
-                "message":"Producto agregada correctamente",
-                "Data": infoNewProducto}); 
-            }else{
-               return res.status(409).json({
-                "status":true,
-                "message":"No se pudo agregar correctamente",
-                "Data": nuevaProducto});
-            }
-        };
-        }catch (error) {
-            return  res.status(409).json({  
-                "status":true,
-                "message":error
-            }); 
+        }
+        
+        const newProducto = await new Producto({nombreProducto}).save();
+        
+        if(!newProducto){
+           return badRequest(res, 'No se pudo agregar correctamente', newProducto);
+        }
+
+        return sendOk(res,'Producto agregado correctamente', newProducto); 
+
+    }catch (error) {
+        return  internalError(res, 'Error inesperado', error); 
     }
 };
 
 const updatePayment  = async (req,res) =>{
     try {
+        
         const {id} = req.params;
         const {tipoPago} = req.body;
-        if(tipoPago !== ''){
-            await pagos.findByIdAndUpdate(id,req.body);
-            return res.status(200).json({
-                "status":true,
-                "message":"Pago Actualizado Correctamente",
-                "id_Data": req.body
-            });
-        }else{
-            return res.status(409).json({
-                "status":true,
-                "message":"los campos deben estar llenados",
-                "id_Data":  req.body
-            });
+        
+        if(nombreCategoria.length <= 0){
+            return badRequest(res, 'El campo tipo de pago debe tener datos', tipoPago);
         }
+
+        if(await searchPago(tipoPago)){
+             return badRequest(res, 'No se pudo actualizar el pago ', tipoPago);
+        }
+
+        const canUpdatePay = await Product.findByIdAndUpdate(id,req.body);
+
+        if(!canUpdatePay){
+            return badRequest(res, 'No se pudo actualizar el pago ', tipoPago);
+        }
+        return sendOk(res,'pago Actualizado Correctamente', req.body); 
+          
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error); 
     }
 };
 
 const deletePayment = async (req,res)=>{
     try {
-        const {id} = req.params;
 
-        await pagos.deleteOne({id});
-        
-        return res.status(200).json({
-            "status":true,
-            "message":"pago Eliminada Correctamente",
-            "id_Data": id
-        });
+        const {id} = req.params;
+        const cantDeletePagos = await pagos.deleteOne({id});;
+
+        return (!cantDeletePagos)
+            ? badRequest(res, 'No se pudo eliminar el pago', {id})
+            : sendOk(res,'pago Eliminada Correctamente', id); 
+     
     } catch (error) {
-        return  res.status(409).json({  
-            "status":true,
-            "message":error
-        }); 
+        return internalError(res, 'Error inesperado', error); 
     }
 };
+
+const searchProduct = async(nombreProducto) =>{
+    try {
+
+        const exitPago = await Product.findOne({nombreProducto});
+
+        return (exitPago) ? true : false;
+
+    } catch (error) {
+        return true;
+    }
+}
+
+const searchPago = async(nombreProducto) =>{
+    try {
+
+        const exitProduct = await pago.findOne({nombreProducto});
+
+        return (exitProduct) ? true : false;
+
+    } catch (error) {
+        return true;
+    }
+ 
+}
 
 module.exports ={
     onePayment,

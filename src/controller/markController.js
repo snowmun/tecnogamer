@@ -6,12 +6,11 @@ const getMarkById = async( req,res) => {
     try {
 
         const {id} = req.params;
-
         const mark = await Mark.findById(id);
 
-        return (!mark)
-            ? badRequest(res, 'no se encontro ninguna marca con la siguiente id', id)
-            : sendOk(res,'Marca encontrada con exito', mark)
+        return  (!mark)
+                        ? badRequest(res, 'no se encontro ninguna marca con la siguiente id', id)
+                        : sendOk(res,'Marca encontrada con exito', mark)
           
     } catch (error) {
         return internalError(res, 'Error inesperado', error);
@@ -33,10 +32,8 @@ const createMark = async (req, res) => {
     try {
 
         const {nombreMarca} = req.body;
-
         const  mark = await Mark.find({nombreMarca});
 
-        
         if(await searchMark(nombreMarca)){
             return badRequest(res, 'Ya se encuentra registrada está marca', mark);
         }
@@ -48,11 +45,10 @@ const createMark = async (req, res) => {
         }
 
         return sendOk(res, 'Marca agregada correctamente', newMark);
-        
-        
-        }catch (error) {
-            return  internalError(res, 'Error inesperado', error);  
-        }
+    
+    }catch (error) {
+        return  internalError(res, 'Error inesperado', error);  
+    }
 };
 
 const updateMark = async (req,res) =>{
@@ -87,8 +83,8 @@ const deleteMark= async (req,res)=>{
         const canDeleteMark = await Mark.findByIdAndDelete(id);
 
         return (!canDeleteMark)
-            ? badRequest(res, 'No se pudo eliminar la marca', {})
-            : sendOk(res,'Marca Eliminada Correctamente', id)
+                                ? badRequest(res, 'No se pudo eliminar la marca', {})
+                                : sendOk(res,'Marca Eliminada Correctamente', id)
             
     } catch (error) {
         return  internalError(res, 'Error inesperado', error); 
