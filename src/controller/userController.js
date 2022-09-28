@@ -58,7 +58,7 @@ const useregister = async (req, res) => {
   try {
     //const { calle, numero, block, depto, piso, comunaId } = req.body; //Desestructuración de modelo dirección
 
-    const { nombre, rut, correo, apellido, fono } = req.body; //Desestructuración de modelo datos personales
+    const { nombre, rut, correo, apellido, fono,tipoUsuario } = req.body; //Desestructuración de modelo datos personales
 
     const { contrasena } = req.body; //Desestructuración de modelo usuario
 
@@ -67,6 +67,7 @@ const useregister = async (req, res) => {
     if (existRut.length > 0) {
       return badRequest(res, "El rut ya esta registrado", rut);
     }
+    const rol = tipoUsuario? tipoUsuario : 1 ;
 
     let nombreUser = `${nombre.substr(nombre, 2)}${apellido}`.toLowerCase(),
       usuario = "",
@@ -83,7 +84,7 @@ const useregister = async (req, res) => {
 
     //const nuevoDireccion = await new Direccion({ calle, numero, block, depto, piso, comunaId }).save();
     const nuevoDatosP = await new DatosP({ nombre, rut, correo, apellido, fono, }).save();
-    const nuevoUsuario = await new Usuario({ nombreUsuario: nombreUser, contrasena: contrasenaHasheada, rol: 1, datosPersoId: nuevoDatosP._id, }).save();
+    const nuevoUsuario = await new Usuario({ nombreUsuario: nombreUser, contrasena: contrasenaHasheada, rol , datosPersoId: nuevoDatosP._id, }).save();
 
     if (!nuevoUsuario) {
       return badRequest(res, "El usuairo no fue agregado", nuevoUsuario);
