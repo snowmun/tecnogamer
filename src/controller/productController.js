@@ -11,8 +11,6 @@ const getProductById = async (req, res) => {
 
     const img64 = Buffer.from(product.img).toString('base64');
 
-
-
     if (!product) {
       return badRequest(res, "no se encontro ningún producto con la siguiente id", id)
     }
@@ -73,7 +71,8 @@ const createProduct = async (req, res) => {
     // if( countProduct > 0 || countProduct === -1){
     //     return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
     // }
-    const bindata = Buffer.from(img, "base64");
+
+    const bindata = (img.length > 0) ? Buffer.from(img, "base64") : '';
 
     req.body.img = bindata;
 
@@ -93,34 +92,20 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { nombreProducto } = req.body;
+    const { nombreProducto, img } = req.body;
 
-    const { img } = await Product.findById(id);
+    const bindata = Buffer.from(img, "base64");
 
-    let filename = img;
+    req.body.img = bindata;
 
-    if (req.file) {
-      filename = req.file.filename;
-
-      fs.unlinkSync(path.join(__dirname, `../public/${img}`));
-    }
-
-    delete req.body.img;
-
-    const canUpdateProduct = await Product.findByIdAndUpdate(id, {
-      ...req.body,
-      img: filename,
-    });
+    const canUpdateProduct = await Product.findByIdAndUpdate(id, req.body);
 
     if (!canUpdateProduct) {
-      return badRequest(
-        res,
-        "No se pudo actualizar el producto",
-        nombreProducto
-      );
+      return badRequest(res, "No se pudo actualizar el producto", nombreProducto);
     }
 
     return sendOk(res, "Producto Actualizado Correctamente", req.body);
+
   } catch (error) {
     return internalError(res, "Error inesperado", error);
   }

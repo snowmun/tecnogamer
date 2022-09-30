@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const { controllerUser, controllerMark, controllerCategory, controllerProduct,
     controllerPago, controllerdetalleCompra, controllerComuna, controllerRegion, controllerUpload } = require("../controller/indexController");
-const { validaForm } = require('../middleware/validaForm');
-const { validIdMongo } = require('../middleware/validaParamsId');
 const { validarToken } = require('../auth/validaToken');
 const { createToken } = require('../auth/getToken');
 const upload = require('../config/multer/multer');
 const { send } = require('../config/mailer');
 const { validaExtension } = require('../middleware/validaExtension');
+const { validaFormProduct, validaFormRegister } = require('../middleware/validaForm');
+const { validIdMongo } = require('../middleware/validaParamsId');
 
 //Rutas Usuario
 router.get('/api/v0/oneuser/:id', controllerUser.getUser);
 router.get('/api/v0/alluser', controllerUser.getAll);
-router.post('/api/v0/create-user', validaForm, controllerUser.useregister);
+router.post('/api/v0/create-user', [validaFormRegister], controllerUser.useregister);
 router.post('/api/v0/login', controllerUser.userlogin);
 router.delete('/api/v0/deleteuser/:id', controllerUser.deleteUser);
 router.put('/api/v0/updateuser/:id', controllerUser.UpdateUser);
@@ -35,12 +35,12 @@ router.delete('/api/v0/delete-category/:id', [validarToken, validIdMongo], contr
 // producto
 router.get('/api/v0/allproducts', controllerProduct.getAllProducts);
 router.get('/api/v0/one-product/:id', validIdMongo, controllerProduct.getProductById);
-router.post('/api/v0/create-product', [validarToken], controllerProduct.createProduct);
-router.put('/api/v0/update-product/:id', [validarToken, validIdMongo, upload.single('img' || '')], controllerProduct.updateProduct);
+router.post('/api/v0/create-product', [validarToken, validaFormProduct], controllerProduct.createProduct);
+router.put('/api/v0/update-product/:id', [validarToken, validIdMongo, validaFormProduct], controllerProduct.updateProduct);
 router.delete('/api/v0/delete-product/:id', [validarToken, validIdMongo], controllerProduct.deleteProduct);
 
 //pago
-router.get('/api/v0/allPayment', validIdMongo,controllerPago.onePayment);
+router.get('/api/v0/allPayment', validIdMongo, controllerPago.onePayment);
 router.get('/api/v0/onePayment/:id', validIdMongo, controllerPago.allPayment);
 router.post('/api/v0/registerPayment', controllerPago.registerPayment);
 router.put('/api/v0/updatePayment/:id', controllerPago.updatePayment);

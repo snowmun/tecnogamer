@@ -1,9 +1,11 @@
 const { badRequest } = require("../helpers/http");
 
-const inputs = ['nombre', 'rut', 'correo', 'apellido', 'contrasena'];
+const inputsRegister = ['nombre', 'rut', 'correo', 'apellido', 'contrasena'];
 
-const validaForm = (req, res, next) => {
-    for (const input of inputs) {
+const inputsProduct = ['nombreProducto', 'stock', 'precio'];
+
+const validaFormRegister = (req, res, next) => {
+    for (const input of inputsRegister) {
         if (req.body[input].length <= 0) {
             return badRequest(res, `${input} no debe estar vacío`, input);
         }
@@ -11,4 +13,13 @@ const validaForm = (req, res, next) => {
     next();
 }
 
-module.exports = { validaForm };
+const validaFormProduct = (req, res, next) => {
+    for (const input of inputsProduct) {
+        if (req.body[input].length <= 0) {
+            return badRequest(res, `${input} no debe estar vacío`, input);
+        }
+    }
+    next();
+}
+
+module.exports = { validaFormRegister, validaFormProduct };

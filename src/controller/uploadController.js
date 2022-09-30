@@ -4,11 +4,20 @@ const upload = (req, res) => {
     try {
         const { img64 } = req.body;
 
-        const bas64 = img64.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+        let bas64 = '';
 
-        const extension = img64.split(';')[0].split('/')[1];
+        let extension = '';
 
-        sendOk(res, 'Archivo procesada correcctamente', { bas64, extension });
+        if (img64.length > 0) {
+
+            bas64 = img64.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+
+            extension = img64.split(';')[0].split('/')[1];
+
+            return sendOk(res, 'Archivo procesada correcctamente', { bas64, extension });
+        }
+
+        return sendOk(res, 'Archivo procesada correcctamente', { bas64, extension });
 
     } catch (error) {
         return internalError(res, 'Error interno', error);

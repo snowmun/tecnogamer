@@ -5,19 +5,20 @@ const extensionPermitida = ['png', 'jpg', 'jpeg'];
 const validaExtension = (req, res, next) => {
 
     const { img64 } = req.body;
+    if (img64.length > 0) {
+        let extension = img64.split(';')[0].split('/')[1];
 
-    let extension = img64.split(';')[0].split('/')[1];
-
-    if (!extensionPermitida.includes(extension)) {
-        switch (extension) {
-            case 'plain':
-                extension = 'txt';
-                break;
-            case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
-                extension = 'docx';
-                break;
+        if (!extensionPermitida.includes(extension)) {
+            switch (extension) {
+                case 'plain':
+                    extension = 'txt';
+                    break;
+                case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
+                    extension = 'docx';
+                    break;
+            }
+            return badRequest(res, `Extensió no pemitida "${extension}"`, { extension });
         }
-        return badRequest(res, `Extensió no pemitida "${extension}"`, { extension });
     }
     next();
 }
