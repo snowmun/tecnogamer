@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Direccion = require("../model/direccionModel");
 const DatosP = require("../model/datosPersonalesModel");
-const { sendOk, badRequest } = require("../helpers/http");
+const { sendOk, badRequest, internalError } = require("../helpers/http");
 
 const getUser = async (req, res) => {
   try {
@@ -159,23 +159,27 @@ const userlogin = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { datosPersoId } = await Usuario.findById({ _id: id });
-    const [{ _id: idPerso, direccionId }] = datosPersoId;
-    const [{ _id: idDire }] = direccionId;
-    await Usuario.deleteOne({ _id: id });
-    await DatosP.deleteOne({ _id: idPerso });
-    await Direccion.deleteOne({ _id: idDire });
+    const  {datosPersoId}  = await Usuario.findById({ _id: id });
 
-    return res.status(200)({
-      status: true,
-      message: "Usuario Eliminado Correctamente",
-      id_Data: id,
-    });
+    // con comuna 
+    // const [{ _id: idPerso, direccionId }] = datosPersoId;
+    // const [{ _id: idDire }] = direccionId;
+    console.log(datosPersoId)
+    const [{ _id: idPerso }] = datosPersoId;
+    const userDelete = await Usuario.deleteOne({ _id: id });
+    const personalDelete = await DatosP.deleteOne({ _id: idPerso });
+    // await Direccion.deleteOne({ _id: idDire });
+
+
+
+    if (!userDelete && !personalDelete) {
+     return sendOk(res, "No se pudo eliminar el usuario0", id);
+    }
+
+    sendOk(res, "Usuario Eliminado Correctamente", id);
+
   } catch (error) {
-    return res.status(409)({
-      status: true,
-      message: error,
-    });
+    return internalError(res, "Error inesperado", error);
   }
 };
 
