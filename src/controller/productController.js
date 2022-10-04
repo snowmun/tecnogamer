@@ -94,7 +94,7 @@ const updateProduct = async (req, res) => {
 
     const { nombreProducto, img } = req.body;
 
-    const bindata = Buffer.from(img, "base64");
+    const bindata = (img.length > 0) ? Buffer.from(img, "base64") : img;
 
     req.body.img = bindata;
 
