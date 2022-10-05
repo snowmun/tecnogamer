@@ -35,6 +35,7 @@ router.delete('/api/v0/delete-category/:id', [validarToken, validIdMongo], contr
 // producto
 router.get('/api/v0/allproducts', controllerProduct.getAllProducts);
 router.get('/api/v0/one-product/:id', validIdMongo, controllerProduct.getProductById);
+router.get('/api/v0/products-by-category/:id', validIdMongo, controllerProduct.getProductsByCategory);
 router.post('/api/v0/create-product', [validarToken, validaFormProduct], controllerProduct.createProduct);
 router.put('/api/v0/update-product/:id', [validarToken, validIdMongo, validaFormProduct], controllerProduct.updateProduct);
 router.delete('/api/v0/delete-product/:id', [validarToken, validIdMongo], controllerProduct.deleteProduct);

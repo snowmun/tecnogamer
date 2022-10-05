@@ -56,7 +56,8 @@ const getAllProducts = async (req, res) => {
 
       return body;
 
-    })
+    });
+
     return sendOk(res, "Productos encontrados", newData);
   } catch (error) {
     return internalError(res, "Error inesperado", error);
@@ -136,10 +137,49 @@ const searchProduct = async (nombreProducto) => {
   }
 };
 
+
+const getProductsByCategory = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const allProductsByCategory = await Product.where('categoriaId').in(id);
+
+    const newData = allProductsByCategory.map(product => {
+
+      const img64 = Buffer.from(product.img).toString('base64');
+
+      const body = {
+        _id: product._id,
+        nombreProducto: product.nombreProducto,
+        stock: product.stock,
+        precio: product.precio,
+        descripcion: product.descripcion,
+        extension: product.extension,
+        categoriaId: product.categoriaId,
+        marcaId: product.marcaId,
+        img64
+      }
+
+      return body;
+
+    });
+
+    sendOk(res, "Productos encontrados", newData);
+
+  } catch (error) {
+
+    console.log(error)
+    return internalError(res, "Error inesperado", error);
+
+  }
+}
+
 module.exports = {
   getProductById,
   getAllProducts,
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsByCategory
 };
