@@ -23,10 +23,11 @@ const getProductById = async (req, res) => {
       descripcion: product.descripcion,
       extension: product.extension,
       categoriaId: product.categoriaId,
-      marcaId: product.marcaId
+      marcaId: product.marcaId,
+      img64
     }
 
-    sendOk(res, "Producto encontrada con exito", { body, img64 });
+    sendOk(res, "Producto encontrada con exito", body);
 
   } catch (error) {
     console.log(error)
@@ -67,11 +68,13 @@ const getAllProducts = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const { nombreProducto, img } = req.body;
-    // const countProduct = await searchProduct(nombreProducto.trim());
 
-    // if( countProduct > 0 || countProduct === -1){
-    //     return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
-    // }
+    const countProduct = await searchProduct(nombreProducto.trim());
+
+
+    if (countProduct > 0 || countProduct === -1) {
+      return badRequest(res, `Ya se encuentra registrado este producto "${nombreProducto}"`, nombreProducto);
+    }
 
     const bindata = (img.length > 0) ? Buffer.from(img, "base64") : '';
 

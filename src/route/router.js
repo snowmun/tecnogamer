@@ -68,7 +68,7 @@ router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
 router.post('/api/v0/getToken', createToken);
 
 //Upload
-router.post('/api/v0/upload', validaExtension, controllerUpload.upload);
+router.post('/api/v0/upload', [validarToken, validaExtension], controllerUpload.upload);
 
 //Correo
 router.post('/api/v0/send-email', send);

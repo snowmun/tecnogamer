@@ -12,7 +12,7 @@ const createToken = (req, res) => {
 
             req.headers['token'] = token;
 
-            return http.sendOk(res, 'Acceso permitido', { "token": token, "origen": '' });
+            return http.sendOk(res, 'Acceso permitido', { token: token });
 
         } else {
 
