@@ -164,7 +164,6 @@ const deleteUser = async (req, res) => {
     // con comuna 
     // const [{ _id: idPerso, direccionId }] = datosPersoId;
     // const [{ _id: idDire }] = direccionId;
-    console.log(datosPersoId)
     const [{ _id: idPerso }] = datosPersoId;
     const userDelete = await Usuario.deleteOne({ _id: id });
     const personalDelete = await DatosP.deleteOne({ _id: idPerso });
@@ -186,25 +185,37 @@ const deleteUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const { nombre, rut, correo, apellido, fono } = req.body;
-    const datosActualizado = await DatosP.findByIdAndUpdate(
-      { _id: id },
+    const { nombreUsuario, rol, nombre, apellido,rut, fono,correo } = req.body;
+    const datosPersoId = await searchUser(id);
+    await Usuario.findByIdAndUpdate(id,{nombreUsuario, rol} )
+    await DatosP.findByIdAndUpdate(datosPersoId,{
       nombre,
-      rut,
-      correo,
       apellido,
-      fono
+      rut,
+      fono,
+      correo
+      }
     );
     return res.status(200).json({
       status: true,
       message: "Registro Actualizado Correctamente",
-      id_Data: datosActualizado,
+      id_Data: req.body,
     });
   } catch (error) {
     return res.status(409).json({
       status: true,
       message: error,
     });
+  }
+};
+
+const searchUser = async (id) => {
+  try {
+    const datosUser = await Usuario.findById(id)
+    const datosPersoId = await DatosP.findById(datosUser.datosPersoId)
+    return datosPersoId.id
+  } catch (error) {
+    return -1;
   }
 };
 
