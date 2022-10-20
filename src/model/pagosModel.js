@@ -1,14 +1,14 @@
-const {model , Schema} = require("mongoose");
+const { model, Schema } = require("mongoose");
 //orlando modificar listo
-const pagoSchema = new Schema ({
-    tipoPago:{type:String,require: true},
-    estadoPago:{type:String,require: true},
-    fechaPago:{type:String,require: true},
+const pagoSchema = new Schema({
+    tipoPago: { type: String, require: true },
+    estadoPago: { type: String, require: true },
+    fechaPago: { type: String, require: true },
     compraId: [{
         type: Schema.Types.ObjectId,
-        ref: 'compra',
+        ref: 'Compra',
         autopopulate: true
-    }],    
+    }],
 });
 
 pagoSchema.plugin(require('mongoose-autopopulate'));

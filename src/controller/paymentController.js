@@ -1,106 +1,117 @@
-const pagos = require("../model/pagosModel");
+const { internalError, sendOk } = require("../helpers/http");
+const Pay = require("../model/pagosModel");
 const Product = require("../model/productoModel");
+const { registerPurchase } = require("./purchaseController");
+const { registerPurchaseDetail } = require("./purchaseDetailController");
 
-const onePayment = async( req,res) => {
+const onePayment = async (req, res) => {
 
     try {
 
-        const {id} = req.params;
-        const pago = await pagos.findById(id);
+        const { id } = req.params;
+        const pago = await Pay.findById(id);
 
-        return  (!pago)
-                        ? badRequest(res, 'no se encontro ningun pago con la siguiente id', id)
-                        : sendOk(res,'pago encontrada con exito', pago)
-          
+        return (!pago)
+            ? badRequest(res, 'no se encontro ningun pago con la siguiente id', id)
+            : sendOk(res, 'pago encontrada con exito', pago)
+
     } catch (error) {
         return internalError(res, 'Error inesperado', error);
     }
 };
 
-const allPayment  = async(req,res) => {
+const allPayment = async (req, res) => {
 
-    try{
+    try {
 
-        const allPagos = await pagos.find();
+        const allPagos = await Pay.find();
 
-        return sendOk(res,'las siguientes producto fueron encontradas', allPagos);
+        return sendOk(res, 'las siguientes producto fueron encontradas', allPagos);
 
-    }catch(error){
+    } catch (error) {
 
         return internalError(res, 'Error inesperado', error);
 
     }
 };
 
-const registerPayment  = async (req, res) => {
+const registerPayment = async (req, res) => {
     try {
 
-        const {nombreProducto} = req.body;
+        const { products, valorCompra, fechaCompra, usuarioId } = req.body;
 
-        if(await searchProduct(nombreProducto)){
-            
-            return badRequest(res, 'Ya se encuentra registrado este producto', nombreProducto);
-        
+        const respDetail = await registerPurchaseDetail(products);
+
+        const bodyPurchase = {
+            valorCompra,
+            fechaCompra,
+            usuarioId,
+            detalleCompraId: respDetail
         }
-        
-        const newProducto = await new Producto({nombreProducto}).save();
-        
-        if(!newProducto){
-           return badRequest(res, 'No se pudo agregar correctamente', newProducto);
+        const { _id } = await registerPurchase(bodyPurchase);
+
+        const bodyPay = {
+            tipoPago: req.body.tipoPago,
+            estadoPago: req.body.estadoPago,
+            fechaPago: req.body.fechaPago,
+            compraId: _id
         }
 
-        return sendOk(res,'Producto agregado correctamente', newProducto); 
+        await new Pay(bodyPay).save();
 
-    }catch (error) {
-        return  internalError(res, 'Error inesperado', error); 
+        return sendOk(res, 'Compra realizada con éxito', {}, 200);
+
+    } catch (error) {
+        console.log('aca', error)
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const updatePayment  = async (req,res) =>{
+const updatePayment = async (req, res) => {
     try {
-        
-        const {id} = req.params;
-        const {tipoPago} = req.body;
-        
-        if(nombreCategoria.length <= 0){
+
+        const { id } = req.params;
+        const { tipoPago } = req.body;
+
+        if (nombreCategoria.length <= 0) {
             return badRequest(res, 'El campo tipo de pago debe tener datos', tipoPago);
         }
 
-        if(await searchPago(tipoPago)){
-             return badRequest(res, 'No se pudo actualizar el pago ', tipoPago);
-        }
-
-        const canUpdatePay = await Product.findByIdAndUpdate(id,req.body);
-
-        if(!canUpdatePay){
+        if (await searchPago(tipoPago)) {
             return badRequest(res, 'No se pudo actualizar el pago ', tipoPago);
         }
-        return sendOk(res,'pago Actualizado Correctamente', req.body); 
-          
+
+        const canUpdatePay = await Product.findByIdAndUpdate(id, req.body);
+
+        if (!canUpdatePay) {
+            return badRequest(res, 'No se pudo actualizar el pago ', tipoPago);
+        }
+        return sendOk(res, 'pago Actualizado Correctamente', req.body);
+
     } catch (error) {
-        return internalError(res, 'Error inesperado', error); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const deletePayment = async (req,res)=>{
+const deletePayment = async (req, res) => {
     try {
 
-        const {id} = req.params;
-        const cantDeletePagos = await pagos.deleteOne({id});;
+        const { id } = req.params;
+        const cantDeletePagos = await Pay.deleteOne({ id });;
 
         return (!cantDeletePagos)
-            ? badRequest(res, 'No se pudo eliminar el pago', {id})
-            : sendOk(res,'pago Eliminada Correctamente', id); 
-     
+            ? badRequest(res, 'No se pudo eliminar el pago', { id })
+            : sendOk(res, 'pago Eliminada Correctamente', id);
+
     } catch (error) {
-        return internalError(res, 'Error inesperado', error); 
+        return internalError(res, 'Error inesperado', error);
     }
 };
 
-const searchProduct = async(nombreProducto) =>{
+const searchProduct = async (nombreProducto) => {
     try {
 
-        const exitPago = await Product.findOne({nombreProducto});
+        const exitPago = await Product.findOne({ nombreProducto });
 
         return (exitPago) ? true : false;
 
@@ -109,20 +120,20 @@ const searchProduct = async(nombreProducto) =>{
     }
 }
 
-const searchPago = async(nombreProducto) =>{
+const searchPago = async (nombreProducto) => {
     try {
 
-        const exitProduct = await pago.findOne({nombreProducto});
+        const exitProduct = await pago.findOne({ nombreProducto });
 
         return (exitProduct) ? true : false;
 
     } catch (error) {
         return true;
     }
- 
+
 }
 
-module.exports ={
+module.exports = {
     onePayment,
     allPayment,
     registerPayment,

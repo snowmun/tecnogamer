@@ -1,14 +1,14 @@
-const {model , Schema} = require("mongoose");
+const { model, Schema } = require("mongoose");
 //orlando modificar listo 
 
-const detalleVentaSchema = new Schema ({
-    valor:{type:Number,require: true},
-    cantidad:{type:Number,require: true},
+const detalleVentaSchema = new Schema({
+    valor: { type: Number, require: true },
+    cantidad: { type: Number, require: true },
     productoId: [{
         type: Schema.Types.ObjectId,
-        ref: 'producto',
+        ref: 'Producto',
         autopopulate: true
-    }],    
+    }],
 });
 
 detalleVentaSchema.plugin(require('mongoose-autopopulate'));

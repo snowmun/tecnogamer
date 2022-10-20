@@ -1,30 +1,17 @@
-const Comprar = require("../model/compraModel");
+const purchase = require("../model/compraModel");
 
-const registerPurchase  = async (req, res) => {
+const registerPurchase = async (order) => {
     try {
-            const {valorCompra} = req.body;
-        
-            if(valorCompra !== ''){
-                const nuevaCompra = new Comprar(req.body);
-                if(nuevaCompra){
-                    const infoNewProducto = await nuevaCompra.save();
-                    return res.status(200).json({  
-                    "status":true,
-                    "message":"Producto agregada correctamente",
-                    "Data": infoNewProducto}); 
-                }else{
-                return res.status(409).json({
-                    "status":true,
-                    "message":"No se pudo agregar correctamente",
-                    "Data": nuevaProducto});
-                }
-            }else{
 
-            }
-        }catch (error) {
-            return  res.status(409).json({  
-                "status":true,
-                "message":error
-            }); 
+        const { _id } = await new purchase(order).save();
+
+        return {
+            _id
+        }
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 };
+
+module.exports = { registerPurchase }

@@ -1,8 +1,8 @@
-const {model , Schema} = require("mongoose");
+const { model, Schema } = require("mongoose");
 
-const compraSchema = new Schema ({
-    valorCompra:{type:Number,require: true},
-    fechaCompra:{type:String,require: true },
+const compraSchema = new Schema({
+    valorCompra: { type: Number, require: true },
+    fechaCompra: { type: String, require: true },
     usuarioId: [{
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -10,7 +10,7 @@ const compraSchema = new Schema ({
     }],
     detalleCompraId: [{
         type: Schema.Types.ObjectId,
-        ref: 'detalleCompra',
+        ref: 'DetalleVenta',
         autopopulate: true
     }],
 });

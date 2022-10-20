@@ -1,7 +1,5 @@
 const Usuario = require("../model/userModel");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const Direccion = require("../model/direccionModel");
 const DatosP = require("../model/datosPersonalesModel");
 const { sendOk, badRequest, internalError } = require("../helpers/http");
 
@@ -58,7 +56,7 @@ const useregister = async (req, res) => {
   try {
     //const { calle, numero, block, depto, piso, comunaId } = req.body; //Desestructuración de modelo dirección
 
-    const { nombre, rut, correo, apellido, fono,tipoUsuario } = req.body; //Desestructuración de modelo datos personales
+    const { nombre, rut, correo, apellido, fono, tipoUsuario } = req.body; //Desestructuración de modelo datos personales
 
     const { contrasena } = req.body; //Desestructuración de modelo usuario
 
@@ -67,7 +65,7 @@ const useregister = async (req, res) => {
     if (existRut.length > 0) {
       return badRequest(res, "El rut ya esta registrado", rut);
     }
-    const rol = tipoUsuario? tipoUsuario : 1 ;
+    const rol = tipoUsuario ? tipoUsuario : 1;
 
     let nombreUser = `${nombre.substr(nombre, 2)}${apellido}`.toLowerCase(),
       usuario = "",
@@ -84,7 +82,7 @@ const useregister = async (req, res) => {
 
     //const nuevoDireccion = await new Direccion({ calle, numero, block, depto, piso, comunaId }).save();
     const nuevoDatosP = await new DatosP({ nombre, rut, correo, apellido, fono, }).save();
-    const nuevoUsuario = await new Usuario({ nombreUsuario: nombreUser, contrasena: contrasenaHasheada, rol , datosPersoId: nuevoDatosP._id, }).save();
+    const nuevoUsuario = await new Usuario({ nombreUsuario: nombreUser, contrasena: contrasenaHasheada, rol, datosPersoId: nuevoDatosP._id, }).save();
 
     if (!nuevoUsuario) {
       return badRequest(res, "El usuairo no fue agregado", nuevoUsuario);
@@ -159,7 +157,7 @@ const userlogin = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const  {datosPersoId}  = await Usuario.findById({ _id: id });
+    const { datosPersoId } = await Usuario.findById({ _id: id });
 
     // con comuna 
     // const [{ _id: idPerso, direccionId }] = datosPersoId;
@@ -172,7 +170,7 @@ const deleteUser = async (req, res) => {
 
 
     if (!userDelete && !personalDelete) {
-     return sendOk(res, "No se pudo eliminar el usuario0", id);
+      return sendOk(res, "No se pudo eliminar el usuario0", id);
     }
 
     sendOk(res, "Usuario Eliminado Correctamente", id);
@@ -185,16 +183,16 @@ const deleteUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const { nombreUsuario, rol, nombre, apellido,rut, fono,correo } = req.body;
+    const { nombreUsuario, rol, nombre, apellido, rut, fono, correo } = req.body;
     const datosPersoId = await searchUser(id);
-    await Usuario.findByIdAndUpdate(id,{nombreUsuario, rol} )
-    await DatosP.findByIdAndUpdate(datosPersoId,{
+    await Usuario.findByIdAndUpdate(id, { nombreUsuario, rol })
+    await DatosP.findByIdAndUpdate(datosPersoId, {
       nombre,
       apellido,
       rut,
       fono,
       correo
-      }
+    }
     );
     return res.status(200).json({
       status: true,
