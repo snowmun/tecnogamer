@@ -62,8 +62,8 @@ const registerPayment = async (req, res) => {
         return sendOk(res, 'Compra realizada con éxito', {}, 200);
 
     } catch (error) {
-        console.log('aca', error)
-        return internalError(res, 'Error inesperado', error);
+
+        return internalError(res, error.message || 'Error inesperado', error);
     }
 };
 

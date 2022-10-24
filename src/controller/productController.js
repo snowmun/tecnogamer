@@ -71,8 +71,7 @@ const createProduct = async (req, res) => {
 
     const countProduct = await searchProduct(nombreProducto.trim());
 
-
-    if (countProduct > 0 || countProduct === -1) {
+    if (countProduct.length > 0 || countProduct === -1) {
       return badRequest(res, `Ya se encuentra registrado este producto "${nombreProducto}"`, nombreProducto);
     }
 
@@ -97,6 +96,14 @@ const updateProduct = async (req, res) => {
     const { id } = req.params;
 
     const { nombreProducto, img } = req.body;
+
+    const product = await searchProduct(nombreProducto.trim());
+
+    if (product.length > 0 || countProduct === -1) {
+      if (product[0]._id.toString() !== id) {
+        return badRequest(res, `Ya se encuentra registrado este producto "${nombreProducto}"`, nombreProducto);
+      }
+    }
 
     const bindata = (img.length > 0) ? Buffer.from(img, "base64") : img;
 
@@ -134,7 +141,11 @@ const deleteProduct = async (req, res) => {
 
 const searchProduct = async (nombreProducto) => {
   try {
-    return (await Product.find({ nombreProducto })).length;
+
+    const counteProduct = await Product.find({ nombreProducto });
+
+    return counteProduct;
+
   } catch (error) {
     return -1;
   }

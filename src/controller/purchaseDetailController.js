@@ -28,7 +28,7 @@ const registerPurchaseDetail = async (detail = []) => {
 
             const newStock = parseInt(findProduct.stock) - productDetail.cantidad;
 
-            if (newStock < 0) throw new Error('Producto sin stock');
+            if (newStock < 0) throw { error: true, message: `Lo sentimos, pero no hay stock suficiente del producto ${findProduct.nombreProducto}`, code: 400 }
 
             delete findProduct.stock;
 
@@ -44,8 +44,6 @@ const registerPurchaseDetail = async (detail = []) => {
         return arrayId;
 
     } catch (error) {
-        console.log(error);
-
         throw error;
     }
 };

@@ -82,13 +82,23 @@ const useregister = async (req, res) => {
 
     //const nuevoDireccion = await new Direccion({ calle, numero, block, depto, piso, comunaId }).save();
     const nuevoDatosP = await new DatosP({ nombre, rut, correo, apellido, fono, }).save();
+
     const nuevoUsuario = await new Usuario({ nombreUsuario: nombreUser, contrasena: contrasenaHasheada, rol, datosPersoId: nuevoDatosP._id, }).save();
 
     if (!nuevoUsuario) {
-      return badRequest(res, "El usuairo no fue agregado", nuevoUsuario);
+      return badRequest(res, "El usuairo no fue agregado", { nuevoUsuario });
     }
+    const { rol: rolUser, nombreUsuario, _id, datosPersoId } = nuevoUsuario;
 
-    return sendOk(res, "Usuario agregado correctamente", nuevoUsuario);
+    return sendOk(res, "Usuario agregado correctamente", {
+      rolUser,
+      nombreUser: nombreUsuario,
+      _id,
+      nombre: datosPersoId[0].nombre,
+      apellido: datosPersoId[0].apellido,
+      correo: datosPersoId[0].correo,
+      fono: datosPersoId[0].fono
+    });
 
   } catch (error) {
     return internalError(res, "Error inesperado", error);
@@ -113,9 +123,9 @@ const userlogin = async (req, res) => {
       return badRequest(res, "Contraseña incorrecta", contrasena);
     }
 
-    const { _id, nombre, apellido, correo } = datosPersoId.pop();
+    const { _id, nombre, apellido, correo, fono } = datosPersoId.pop();
 
-    return sendOk(res, "Usuario logeado correctamente", { rol, nombreUser, _id, nombre, apellido, correo });
+    return sendOk(res, "Usuario logeado correctamente", { rol, nombreUser, _id, nombre, apellido, correo, fono });
 
   } catch (error) {
     return internalError(res, "Error inesperado", error);
