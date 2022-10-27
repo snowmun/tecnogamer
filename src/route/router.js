@@ -17,8 +17,9 @@ router.get('/api/v0/oneuser/:id', controllerUser.getUser);
 router.get('/api/v0/alluser', controllerUser.getAll);
 router.post('/api/v0/create-user', [validaFormRegister], controllerUser.useregister);
 router.post('/api/v0/login', controllerUser.userlogin);
+router.put('/api/v0/update-user/:id', [validarToken, validIdMongo], controllerUser.UpdateUser);
+router.put('/api/v0/update-pass/:id', [validarToken, validIdMongo], controllerUser.changePass);
 router.delete('/api/v0/deleteuser/:id', controllerUser.deleteUser);
-router.put('/api/v0/updateuser/:id', controllerUser.UpdateUser);
 
 //Rutas Marca
 router.get('/api/v0/allmarks', controllerMark.getAllMarks);

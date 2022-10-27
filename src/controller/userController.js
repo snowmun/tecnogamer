@@ -115,7 +115,7 @@ const userlogin = async (req, res) => {
       return badRequest(res, "No existe este usuario", nombreUsuario);
     }
 
-    const { contrasena: bdPas, rol, nombreUsuario: nombreUser, datosPersoId } = existUser[0];
+    const { contrasena: bdPas, rol, nombreUsuario: nombreUser, datosPersoId, _id } = existUser[0];
 
     const match = await bcrypt.compare(contrasena, bdPas);
 
@@ -123,7 +123,7 @@ const userlogin = async (req, res) => {
       return badRequest(res, "Contraseña incorrecta", contrasena);
     }
 
-    const { _id, nombre, apellido, correo, fono } = datosPersoId.pop();
+    const { nombre, apellido, correo, fono } = datosPersoId.pop();
 
     return sendOk(res, "Usuario logeado correctamente", { rol, nombreUser, _id, nombre, apellido, correo, fono });
 
@@ -193,40 +193,70 @@ const deleteUser = async (req, res) => {
 const UpdateUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const { nombreUsuario, rol, nombre, apellido, rut, fono, correo } = req.body;
-    const datosPersoId = await searchUser(id);
-    await Usuario.findByIdAndUpdate(id, { nombreUsuario, rol })
-    await DatosP.findByIdAndUpdate(datosPersoId, {
+
+    const { nombreUsuario, nombreUser, rol, nombre, apellido, rut, fono, correo } = req.body;
+
+    const existUser = await searchUser(nombreUsuario || nombreUser);
+
+    if (existUser.length > 0 || existUser === -1) {
+      if (existUser[0]._id.toString() !== id) {
+        return badRequest(res, `Ya se encuentra registrado este nombre de usuario "${nombreUsuario || nombreUser}"`, nombreUsuario || nombreUser);
+      }
+    }
+
+    await Usuario.findByIdAndUpdate(id, { nombreUsuario: nombreUsuario || nombreUser, rol });
+
+    await DatosP.findByIdAndUpdate(existUser[0].datosPersoId[0]._id, {
       nombre,
       apellido,
-      rut,
+      rut: (nombreUsuario) ? rut : existUser[0].datosPersoId[0].rut,
       fono,
       correo
     }
     );
-    return res.status(200).json({
-      status: true,
-      message: "Registro Actualizado Correctamente",
-      id_Data: req.body,
-    });
+    return sendOk(res, "Registro Actualizado Correctamente", req.body);
+
   } catch (error) {
-    return res.status(409).json({
-      status: true,
-      message: error,
-    });
+    console.log(error)
+    return internalError(res, "Error inesperado", error);
   }
 };
 
-const searchUser = async (id) => {
+const searchUser = async (nombreUsuario) => {
   try {
-    const datosUser = await Usuario.findById(id)
-    const datosPersoId = await DatosP.findById(datosUser.datosPersoId)
-    return datosPersoId.id
+
+    const counteUser = await Usuario.find({ nombreUsuario });
+
+    return counteUser;
+
   } catch (error) {
     return -1;
   }
 };
 
+
+const changePass = async (req, res) => {
+  try {
+    const { lastPass, newPass } = req.body;
+
+    const { id } = req.params;
+
+    const findUser = await Usuario.findById(id);
+
+    const match = await bcrypt.compare(lastPass, findUser.contrasena);
+
+    if (!match) {
+      return badRequest(res, 'La contraseña actual, no coincide con la registrada', {});
+    }
+
+    await Usuario.findByIdAndUpdate(id, { contrasena: bcrypt.hashSync(newPass, 10) });
+
+    return sendOk(res, "Contraseña actualizada correctamente", {});
+
+  } catch (error) {
+    console.log(error)
+  }
+}
 module.exports = {
   getUser,
   useregister,
@@ -234,4 +264,5 @@ module.exports = {
   getAll,
   deleteUser,
   UpdateUser,
+  changePass
 };
