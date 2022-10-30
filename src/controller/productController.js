@@ -30,7 +30,6 @@ const getProductById = async (req, res) => {
     sendOk(res, "Producto encontrada con exito", body);
 
   } catch (error) {
-    console.log(error)
     return internalError(res, "Error inesperado", error);
   }
 };
@@ -178,6 +177,10 @@ const getProductsByCategory = async (req, res) => {
       return body;
 
     });
+
+    if (newData.length === 0) {
+      newData.push('No hay datos')
+    }
 
     sendOk(res, "Productos encontrados", newData);
 

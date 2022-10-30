@@ -4,7 +4,6 @@ const { controllerUser, controllerMark, controllerCategory, controllerProduct,
     controllerPago, controllerdetalleCompra, controllerComuna, controllerRegion, controllerUpload, controllerToken } = require("../controller/indexController");
 const { validarToken } = require('../auth/validaToken');
 const { createToken } = require('../auth/getToken');
-const upload = require('../config/multer/multer');
 const { send } = require('../config/mailer');
 const { validaExtension } = require('../middleware/validaExtension');
 const { validaFormProduct, validaFormRegister } = require('../middleware/validaForm');
@@ -44,8 +43,8 @@ router.put('/api/v0/update-product/:id', [validarToken, validarUser, validIdMong
 router.delete('/api/v0/delete-product/:id', [validarToken, validarUser, validIdMongo], controllerProduct.deleteProduct);
 
 //pago
-router.get('/api/v0/allPayment', validIdMongo, controllerPago.onePayment);
-router.get('/api/v0/onePayment/:id', validIdMongo, controllerPago.allPayment);
+router.get('/api/v0/allPayment', validIdMongo, controllerPago.allPayment);
+router.get('/api/v0/one-payment/:id', [validIdMongo], controllerPago.getPayById);
 router.post('/api/v0/register-payment', [validarToken, validaStock], controllerPago.registerPayment);
 router.put('/api/v0/updatePayment/:id', controllerPago.updatePayment);
 router.delete('/api/v0/deletePayment/:id', controllerPago.deletePayment);

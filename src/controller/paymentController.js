@@ -1,19 +1,47 @@
 const { internalError, sendOk } = require("../helpers/http");
-const Pay = require("../model/pagosModel");
-const Product = require("../model/productoModel");
 const { registerPurchase } = require("./purchaseController");
 const { registerPurchaseDetail } = require("./purchaseDetailController");
+const Pay = require("../model/pagosModel");
+const Product = require("../model/productoModel");
 
-const onePayment = async (req, res) => {
+const getPayById = async (req, res) => {
 
     try {
 
         const { id } = req.params;
         const pago = await Pay.findById(id);
+        console.log(pago)
+        if (!pago) {
 
-        return (!pago)
-            ? badRequest(res, 'no se encontro ningun pago con la siguiente id', id)
-            : sendOk(res, 'pago encontrada con exito', pago)
+            return badRequest(res, 'no se encontro ningun pago con la siguiente id', id);
+
+        }
+
+        const { valorCompra, fechaCompra, usuarioId, detalleCompraId } = pago.compraId[0];
+
+
+        const { datosPersoId } = usuarioId[0];
+
+        const { nombre, apellido, fono, correo } = datosPersoId[0];
+
+        const respProduct = detalleCompraId.map(d => {
+
+            const { nombreProducto, precio } = d.productoId[0];
+
+            return {
+                valor: d.valor,
+                cantidad: d.cantidad,
+                nombreProducto,
+                precio,
+                id: d._id
+            }
+        });
+
+        sendOk(res, 'pago encontrada con exito', {
+            pay: { valorCompra, fechaCompra },
+            user: { nombre, apellido, fono, correo },
+            products: respProduct
+        })
 
     } catch (error) {
         return internalError(res, 'Error inesperado', error);
@@ -57,9 +85,9 @@ const registerPayment = async (req, res) => {
             compraId: _id
         }
 
-        await new Pay(bodyPay).save();
+        const registerPay = await new Pay(bodyPay).save();
 
-        return sendOk(res, 'Compra realizada con éxito', {}, 200);
+        return sendOk(res, 'Compra realizada con éxito', registerPay, 200);
 
     } catch (error) {
 
@@ -134,7 +162,7 @@ const searchPago = async (nombreProducto) => {
 }
 
 module.exports = {
-    onePayment,
+    getPayById,
     allPayment,
     registerPayment,
     updatePayment,
