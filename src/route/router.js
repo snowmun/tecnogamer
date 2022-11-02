@@ -43,7 +43,7 @@ router.put('/api/v0/update-product/:id', [validarToken, validarUser, validIdMong
 router.delete('/api/v0/delete-product/:id', [validarToken, validarUser, validIdMongo], controllerProduct.deleteProduct);
 
 //pago
-router.get('/api/v0/allPayment', validIdMongo, controllerPago.allPayment);
+router.get('/api/v0/get-payments/:id', [validIdMongo], controllerPago.getPaymentsByUser);
 router.get('/api/v0/one-payment/:id', [validIdMongo], controllerPago.getPayById);
 router.post('/api/v0/register-payment', [validarToken, validaStock], controllerPago.registerPayment);
 router.put('/api/v0/updatePayment/:id', controllerPago.updatePayment);
@@ -68,7 +68,8 @@ router.post('/api/v0/registerRegion', controllerRegion.registerRegion);
 
 //Token
 router.post('/api/v0/getToken', createToken);
-router.post('/api/v0/validToken', controllerToken.validarToken)
+router.post('/api/v0/validToken', controllerToken.validarToken);
+
 //Upload
 router.post('/api/v0/upload', [validarToken, validarUser, validaExtension], controllerUpload.upload);
 

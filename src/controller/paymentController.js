@@ -1,16 +1,18 @@
-const { internalError, sendOk } = require("../helpers/http");
+const { internalError, sendOk, badRequest } = require("../helpers/http");
 const { registerPurchase } = require("./purchaseController");
 const { registerPurchaseDetail } = require("./purchaseDetailController");
 const Pay = require("../model/pagosModel");
 const Product = require("../model/productoModel");
+const Compras = require('../model/compraModel');
 
 const getPayById = async (req, res) => {
 
     try {
 
         const { id } = req.params;
+
         const pago = await Pay.findById(id);
-        console.log(pago)
+
         if (!pago) {
 
             return badRequest(res, 'no se encontro ningun pago con la siguiente id', id);
@@ -48,16 +50,40 @@ const getPayById = async (req, res) => {
     }
 };
 
-const allPayment = async (req, res) => {
+const getPaymentsByUser = async (req, res) => {
 
     try {
 
-        const allPagos = await Pay.find();
+        const { id } = req.params;
 
-        return sendOk(res, 'las siguientes producto fueron encontradas', allPagos);
+        const resp = await Compras.find({ usuarioId: id });
+
+        if (resp.length === 0) {
+            return sendOk(res, 'No hay compras realizadas', ['No hay compras']);
+        }
+
+        const buys = resp.map(buy => {
+            let cantidades = 0;
+
+            for (const { cantidad } of buy.detalleCompraId) {
+                cantidades += cantidad;
+            }
+
+            return {
+                buy: {
+                    id: buy._id,
+                    valorCompra: buy.valorCompra,
+                    fechaCompra: buy.fechaCompra,
+                    cantProducts: cantidades
+                },
+                products: buy.detalleCompraId
+            }
+        });
+
+
+        return sendOk(res, 'Compras encontradas', buys);
 
     } catch (error) {
-
         return internalError(res, 'Error inesperado', error);
 
     }
@@ -163,7 +189,7 @@ const searchPago = async (nombreProducto) => {
 
 module.exports = {
     getPayById,
-    allPayment,
+    getPaymentsByUser,
     registerPayment,
     updatePayment,
     deletePayment
