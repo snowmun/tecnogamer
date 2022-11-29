@@ -4,6 +4,9 @@ const { registerPurchaseDetail } = require("./purchaseDetailController");
 const Pay = require("../model/pagosModel");
 const Product = require("../model/productoModel");
 const Compras = require('../model/compraModel');
+const { createTransaction } = require("../service/webpay");
+
+
 
 const getPayById = async (req, res) => {
 
@@ -91,32 +94,16 @@ const getPaymentsByUser = async (req, res) => {
 
 const registerPayment = async (req, res) => {
     try {
+        const { listProducts, user, total } = req.body;
 
-        const { products, valorCompra, fechaCompra, usuarioId } = req.body;
+        await registerPurchaseDetail(listProducts);
 
-        const respDetail = await registerPurchaseDetail(products);
+        const respWebpay = await createTransaction(user, total);
 
-        const bodyPurchase = {
-            valorCompra,
-            fechaCompra,
-            usuarioId,
-            detalleCompraId: respDetail
-        }
-        const { _id } = await registerPurchase(bodyPurchase);
-
-        const bodyPay = {
-            tipoPago: req.body.tipoPago,
-            estadoPago: req.body.estadoPago,
-            fechaPago: req.body.fechaPago,
-            compraId: _id
-        }
-
-        const registerPay = await new Pay(bodyPay).save();
-
-        return sendOk(res, 'Compra realizada con éxito', registerPay, 200);
+        return sendOk(res, 'OK', respWebpay, 200);
 
     } catch (error) {
-
+        console.log(error)
         return internalError(res, error.message || 'Error inesperado', error);
     }
 };
@@ -162,7 +149,7 @@ const deletePayment = async (req, res) => {
     }
 };
 
-const searchProduct = async (nombreProducto) => {
+const validateProduct = async (products) => {
     try {
 
         const exitPago = await Product.findOne({ nombreProducto });

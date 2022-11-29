@@ -1,7 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { controllerUser, controllerMark, controllerCategory, controllerProduct,
-    controllerPago, controllerdetalleCompra, controllerComuna, controllerRegion, controllerUpload, controllerToken } = require("../controller/indexController");
+const { controllerUser,
+    controllerMark,
+    controllerCategory,
+    controllerProduct,
+    controllerPago,
+    controllerdetalleCompra,
+    controllerComuna,
+    controllerRegion,
+    controllerUpload,
+    controllerToken,
+    controllerWebPay } = require("../controller/indexController");
 const { validarToken } = require('../auth/validaToken');
 const { createToken } = require('../auth/getToken');
 const { send } = require('../config/mailer');
@@ -75,5 +84,8 @@ router.post('/api/v0/upload', [validarToken, validarUser, validaExtension], cont
 
 //Correo
 router.post('/api/v0/send-email', send);
+
+//detallePago
+router.post('/api/v0/detaillPay', controllerWebPay.verifyPay);
 
 module.exports = router;

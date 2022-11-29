@@ -8,6 +8,7 @@ const controllerComuna = require('./comunaController');
 const controllerRegion = require('./regionController');
 const controllerUpload = require('./uploadController');
 const controllerToken = require('./tokenController');
+const controllerWebPay = require('./webPayController');
 
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
     controllerComuna,
     controllerRegion,
     controllerUpload,
-    controllerToken
+    controllerToken,
+    controllerWebPay,
 }

@@ -20,8 +20,6 @@ const allPurchaseDetail = async (req, res) => {
 const registerPurchaseDetail = async (detail = []) => {
     try {
 
-        const arrayId = [];
-
         for (const productDetail of detail) {
 
             const findProduct = await product.findById(productDetail.productoId);
@@ -30,18 +28,7 @@ const registerPurchaseDetail = async (detail = []) => {
 
             if (newStock < 0) throw { error: true, message: `Lo sentimos, pero no hay stock suficiente del producto ${findProduct.nombreProducto}`, code: 400 }
 
-            delete findProduct.stock;
-
-            findProduct.stock = newStock
-
-            await product.findByIdAndUpdate(productDetail.productoId, findProduct);
-
-            const { _id } = await new purchaseDetail(productDetail).save();
-
-            arrayId.push(_id);
         }
-
-        return arrayId;
 
     } catch (error) {
         throw error;
